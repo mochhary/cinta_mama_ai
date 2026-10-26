@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDG Ollama AI - Google Developer Groups Workspace</title>
+    <!-- Google Fonts: Google Sans / Product Sans vibe with Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* GDG / Google Brand Colors */
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC04;
+            --google-green: #34A853;
+            --google-blue-dark: #1a73e8;
+
+            /* Google Dark Material Theme (Material 3 Dark) */
+            --bg-base: #1f2125;
+            --bg-surface: #282a2f;
+            --bg-card: #303238;
+            --border-google: #3c4043;
+            --border-hover: #5f6368;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-disabled: #5f6368;
+            --console-bg: #141518;
+            --console-border: #2e3136;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Google Sans', 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Iconic GDG 4-Color Accent Top Bar */
+        .gdg-color-strip {
+            height: 4px;
+            width: 100%;
+            display: flex;
+        }
+
+        .gdg-color-strip .c-blue { flex: 1; background-color: var(--google-blue); }
+        .gdg-color-strip .c-red { flex: 1; background-color: var(--google-red); }
+        .gdg-color-strip .c-yellow { flex: 1; background-color: var(--google-yellow); }
+        .gdg-color-strip .c-green { flex: 1; background-color: var(--google-green); }
+
+        /* Header Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: #202124;
+            border-bottom: 1px solid var(--border-google);
+            padding: 0.65rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        /* GDG Logo Icon */
+        .gdg-logo-svg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-text h1 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .brand-text h1 span.gdg-txt {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Material 3 Status Badge */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(52, 168, 83, 0.12);
+            border: 1px solid rgba(52, 168, 83, 0.3);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.76rem;
+            color: #81c995;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--google-green);
+            box-shadow: 0 0 8px var(--google-green);
+        }
+
+        /* GDG Split Toggle Button */
+        .btn-gdg-split {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            background: #303134;
+            border: 1px solid var(--border-google);
+            color: #e8eaed;
+            padding: 0.42rem 0.95rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-gdg-split:hover {
+            background: #3c4043;
+            border-color: var(--google-blue);
+        }
+
+        .btn-gdg-split.active {
+            background: rgba(66, 133, 244, 0.18);
+            border-color: var(--google-blue);
+            color: #8ab4f8;
+        }
+
+        .badge-stream {
+            background: var(--google-blue);
+            color: #ffffff;
+            font-size: 0.62rem;
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-icon {
+            background: #303134;
+            border: 1px solid var(--border-google);
+            color: var(--text-secondary);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-icon:hover {
+            color: #ffffff;
+            border-color: var(--google-blue);
+            background: #3c4043;
+        }
+
+        /* Workspace Grid */
+        .workspace-grid {
+            flex: 1;
+            display: flex;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Left Chat Pane */
+        .chat-pane {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 7.5rem;
+            background: #1f2125;
+        }
+
+        .chat-container {
+            max-width: 820px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* GDG Community Hero Screen */
+        .welcome-hero {
+            text-align: center;
+            margin: 2.5rem auto 1.5rem;
+            max-width: 560px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .gdg-banner-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(66, 133, 244, 0.1);
+            border: 1px solid rgba(66, 133, 244, 0.3);
+            border-radius: 9999px;
+            padding: 0.3rem 0.85rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.78rem;
+            color: #8ab4f8;
+            font-weight: 500;
+        }
+
+        .welcome-hero h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .welcome-hero p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Prompt Chips: Material 3 Pill Chips */
+        .prompt-chips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .chip {
+            background: #282a2f;
+            border: 1px solid var(--border-google);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chip.c-blue i { color: var(--google-blue); }
+        .chip.c-green i { color: var(--google-green); }
+        .chip.c-yellow i { color: var(--google-yellow); }
+
+        .chip-text {
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .chip:hover {
+            border-color: var(--google-blue);
+            background: #303238;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Chat Bubbles */
+        .message-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.9rem;
+            animation: slideUp 0.3s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .user-avatar {
+            background: var(--google-blue-dark);
+            color: #ffffff;
+        }
+
+        .ai-avatar {
+            background: #202124;
+            border: 1px solid var(--border-google);
+            color: #ffffff;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 0.95rem 1.15rem;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 0.92rem;
+            position: relative;
+        }
+
+        .user-message {
+            background: rgba(66, 133, 244, 0.15);
+            border: 1px solid rgba(66, 133, 244, 0.3);
+            border-top-left-radius: 4px;
+            color: #e8eaed;
+        }
+
+        .ai-message {
+            background: #282a2f;
+            border: 1px solid var(--border-google);
+            border-top-left-radius: 4px;
+            color: #e8eaed;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.35rem;
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+        }
+
+        .message-model {
+            color: #8ab4f8;
+            font-weight: 600;
+        }
+
+        .message-body {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 7px;
+            height: 15px;
+            background: var(--google-blue);
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Input Dock: Google Gemini / Bard Style Floating Pill */
+        .input-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.85rem 1.25rem 1.25rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(31, 33, 37, 0.85) 30%, #1f2125 100%);
+            z-index: 40;
+            display: flex;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .workspace-grid.split-active .input-dock {
+            width: calc(100% - 640px);
+        }
+
+        @media (max-width: 1100px) {
+            .workspace-grid.split-active .input-dock {
+                width: 100%;
+            }
+        }
+
+        .input-card {
+            max-width: 820px;
+            width: 100%;
+            background: #282a2f;
+            border: 1px solid var(--border-google);
+            border-radius: 24px;
+            padding: 0.55rem 0.75rem 0.55rem 1.25rem;
+            display: flex;
+            align-items: flex-end;
+            gap: 0.75rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .input-card:focus-within {
+            border-color: var(--google-blue);
+            background: #303238;
+            box-shadow: 0 0 0 1px var(--google-blue), 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 0.94rem;
+            resize: none;
+            max-height: 160px;
+            min-height: 26px;
+            line-height: 1.5;
+            padding: 0.4rem 0;
+            font-family: inherit;
+        }
+
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn-send {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--google-blue-dark);
+            border: none;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover:not(:disabled) {
+            background: var(--google-blue);
+            transform: scale(1.05);
+        }
+
+        .btn-send:disabled {
+            background: #3c4043;
+            color: #5f6368;
+            cursor: not-allowed;
+        }
+
+        /* ========================================================
+           RIGHT PANEL: GDG / GOOGLE CLOUD STYLE BACKEND API INSPECTOR
+           ======================================================== */
+        .inspector-pane {
+            width: 0;
+            min-width: 0;
+            height: 100%;
+            background: #141518;
+            border-left: 1px solid var(--border-google);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 30;
+        }
+
+        .workspace-grid.split-active .inspector-pane {
+            width: 640px;
+            min-width: 540px;
+        }
+
+        .inspector-header {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border-google);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e2023;
+        }
+
+        .inspector-title {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .inspector-title span.gdg-tag {
+            color: var(--google-blue);
+        }
+
+        .inspector-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .inspector-btn {
+            background: #282a2f;
+            border: 1px solid var(--border-google);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.72rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .inspector-btn:hover {
+            color: #ffffff;
+            border-color: var(--google-blue);
+            background: #303238;
+        }
+
+        /* Inspector Body */
+        .inspector-body {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Google Cloud Console Style Cards */
+        .api-box {
+            background: #1b1c20;
+            border: 1px solid var(--border-google);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .api-box-header {
+            padding: 0.45rem 0.85rem;
+            background: #222428;
+            border-bottom: 1px solid var(--border-google);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.73rem;
+        }
+
+        .api-box-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #e8eaed;
+            font-weight: 600;
+        }
+
+        .badge-method {
+            background: var(--google-blue-dark);
+            color: #ffffff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.12rem 0.45rem;
+            border-radius: 4px;
+        }
+
+        .badge-status {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.12rem 0.45rem;
+            border-radius: 4px;
+        }
+
+        .status-200 {
+            background: rgba(52, 168, 83, 0.2);
+            color: #81c995;
+            border: 1px solid var(--google-green);
+        }
+
+        .status-pending {
+            background: rgba(66, 133, 244, 0.2);
+            color: #8ab4f8;
+            border: 1px solid var(--google-blue);
+        }
+
+        .status-idle {
+            background: rgba(154, 160, 166, 0.15);
+            color: #9aa0a6;
+            border: 1px solid #5f6368;
+        }
+
+        .status-error {
+            background: rgba(234, 67, 53, 0.2);
+            color: #f28b82;
+            border: 1px solid var(--google-red);
+        }
+
+        .api-meta-row {
+            padding: 0.38rem 0.85rem;
+            font-size: 0.73rem;
+            color: #e8eaed;
+            background: #16171a;
+            border-bottom: 1px solid var(--border-google);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .api-meta-url {
+            color: #8ab4f8;
+            word-break: break-all;
+        }
+
+        .api-headers-block {
+            padding: 0.45rem 0.85rem;
+            background: #141518;
+            font-size: 0.71rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            border-bottom: 1px solid var(--border-google);
+        }
+
+        .api-headers-block span {
+            color: #e8eaed;
+        }
+
+        .api-code-block {
+            padding: 0.65rem 0.85rem;
+            background: #0d0e11;
+            font-size: 0.73rem;
+            line-height: 1.6;
+            color: #e8eaed;
+            overflow-x: auto;
+            max-height: 160px;
+            white-space: pre;
+        }
+
+        .api-stream-block {
+            padding: 0.65rem 0.85rem;
+            background: #0d0e11;
+            font-size: 0.72rem;
+            line-height: 1.65;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 220px;
+            max-height: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stream-line {
+            display: flex;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+
+        .stream-line-num {
+            color: #5f6368;
+            user-select: none;
+            min-width: 28px;
+            text-align: right;
+        }
+
+        .stream-line-content {
+            color: #e8eaed;
+            flex: 1;
+        }
+
+        .chunk-token {
+            color: #8ab4f8;
+            font-weight: 500;
+        }
+
+        .chunk-done {
+            color: #81c995;
+            font-weight: 600;
+            background: rgba(52, 168, 83, 0.12);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            margin-top: 4px;
+        }
+
+        .chunk-error {
+            color: #f28b82;
+            font-weight: 600;
+            background: rgba(234, 67, 53, 0.15);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        /* cURL Box */
+        .curl-box {
+            background: #16171a;
+            border: 1px dashed var(--border-google);
+            border-radius: 8px;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.71rem;
+            color: var(--text-secondary);
+        }
+
+        .curl-box pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #8ab4f8;
+            margin-top: 0.35rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 4.5rem;
+            right: 1.5rem;
+            background: #282a2f;
+            border: 1px solid var(--border-google);
+            border-left: 3px solid var(--google-blue);
+            color: #ffffff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            transition: transform 0.25s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- GDG 4-Color Signature Top Strip -->
+    <div class="gdg-color-strip">
+        <div class="c-blue"></div>
+        <div class="c-red"></div>
+        <div class="c-yellow"></div>
+        <div class="c-green"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-container">
+            <!-- Official GDG Brackets SVG Logo -->
+            <div class="gdg-logo-svg">
+                <svg width="34" height="22" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Left Bracket: Google Blue & Google Red -->
+                    <path d="M12.5 3.5L4 12L12.5 20.5" stroke="#4285F4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.5 3.5L4 12" stroke="#EA4335" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Right Bracket: Google Yellow & Google Green -->
+                    <path d="M27.5 3.5L36 12L27.5 20.5" stroke="#34A853" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M27.5 3.5L36 12" stroke="#FBBC04" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1>
+                    <span class="gdg-txt">Google Developer Groups</span>
+                    <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">| Ollama AI</span>
+                </h1>
+                <p>FastAPI Docker Container • Community AI Workspace</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <!-- Split Screen Button for GDG Backend API View -->
+            <button class="btn-gdg-split active" id="toggleSplitBtn" title="Buka/Tutup panel live request & response API Ollama">
+                <i class="fa-solid fa-code"></i>
+                <span>API Inspector</span>
+                <span class="badge-stream">STREAM</span>
+            </button>
+
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span id="modelBadge">llama3.2:3b</span>
+            </div>
+
+            <button class="btn-icon" id="clearBtn" title="Reset Percakapan">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+
+            <a href="/docs" target="_blank" class="btn-icon" title="Buka Swagger API Docs">
+                <i class="fa-solid fa-book-open"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Workspace Grid Layout (Default Split Active) -->
+    <div class="workspace-grid split-active" id="workspaceGrid">
+        <!-- Left: Chat Panel -->
+        <div class="chat-pane" id="chatPane">
+            <div class="chat-container">
+                <!-- GDG Welcome Hero -->
+                <div class="welcome-hero" id="welcomeHero">
+                    <div class="gdg-banner-badge">
+                        <i class="fa-solid fa-sparkles" style="color:var(--google-yellow);"></i>
+                        <span>GDG Developer Session • GenAI on Docker</span>
+                    </div>
+                    <h2>Build with Google Developer Groups</h2>
+                    <p>Eksplorasi LLM lokal (<strong>llama3.2:3b</strong>) melalui FastAPI & Docker. Pantau streaming raw data API secara langsung di panel sebelah kanan.</p>
+
+                    <div class="prompt-chips">
+                        <div class="chip c-blue" onclick="usePrompt('Apa itu Google Developer Groups (GDG) dan kegiatannya bagi developer?')">
+                            <i class="fa-solid fa-users"></i>
+                            <span class="chip-text">Tentang GDG Community</span>
+                        </div>
+                        <div class="chip c-green" onclick="usePrompt('Jelaskan cara integrasi Ollama API di dalam container Docker menggunakan FastAPI!')">
+                            <i class="fa-brands fa-docker"></i>
+                            <span class="chip-text">FastAPI & Docker Ollama</span>
+                        </div>
+                        <div class="chip c-yellow" onclick="usePrompt('Bagaimana cara kerja response streaming HTTP chunked pada LLM?')">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span class="chip-text">Streaming LLM Chunks</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message-group" id="messageGroup"></div>
+            </div>
+
+            <!-- Fixed Input Dock: Google Capsule Style -->
+            <div class="input-dock">
+                <div class="input-card">
+                    <textarea 
+                        id="promptInput" 
+                        rows="1" 
+                        placeholder="Ketik prompt untuk dikirim ke API Ollama... (Shift+Enter untuk baris baru)"
+                    ></textarea>
+                    <button class="btn-send" id="sendBtn" title="Kirim ke API">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: GDG Cloud Style Backend API Inspector Split Pane -->
+        <div class="inspector-pane" id="inspectorPane">
+            <div class="inspector-header">
+                <div class="inspector-title">
+                    <span class="gdg-tag">&lt;/&gt;</span>
+                    <span>OLLAMA BACKEND API INSPECTOR</span>
+                </div>
+                <div class="inspector-actions">
+                    <button class="inspector-btn" id="copyCurlBtn" title="Salin perintah cURL">
+                        <i class="fa-regular fa-copy"></i> cURL
+                    </button>
+                    <button class="inspector-btn" id="clearApiLogsBtn" title="Bersihkan log stream">
+                        <i class="fa-solid fa-trash-can"></i> Clear
+                    </button>
+                    <button class="inspector-btn" id="closeInspectorBtn" title="Tutup Split View">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="inspector-body">
+                <!-- Outgoing HTTP Request Section -->
+                <div class="api-box">
+                    <div class="api-box-header">
+                        <div class="api-box-title">
+                            <span class="badge-method">POST</span>
+                            <span>OUTGOING HTTP REQUEST</span>
+                        </div>
+                        <span style="color:var(--text-secondary); font-size:0.68rem;">TO: OLLAMA CONTAINER</span>
+                    </div>
+
+                    <div class="api-meta-row">
+                        <span class="api-meta-url" id="reqUrl">http://ollama:11434/api/generate</span>
+                        <span style="color:var(--text-secondary);">HTTP/1.1</span>
+                    </div>
+
+                    <div class="api-headers-block">
+                        <div><span>Host:</span> ollama:11434</div>
+                        <div><span>Content-Type:</span> application/json</div>
+                        <div><span>Accept:</span> application/x-ndjson</div>
+                    </div>
+
+                    <div class="api-code-block" id="reqBodyJson">// Request payload JSON akan tampil di sini saat request dikirim
+{
+  "model": "llama3.2:3b",
+  "prompt": "Menunggu input...",
+  "stream": true
+}</div>
+                </div>
+
+                <!-- Incoming HTTP Response & Live Stream Section -->
+                <div class="api-box" style="flex:1;">
+                    <div class="api-box-header">
+                        <div class="api-box-title">
+                            <i class="fa-solid fa-arrow-down" style="color:var(--google-green);"></i>
+                            <span>INCOMING HTTP STREAM (RAW NDJSON)</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <span id="streamCounter" style="color:var(--text-secondary); font-size:0.68rem;">0 chunks</span>
+                            <span class="badge-status status-idle" id="resStatusBadge">IDLE</span>
+                        </div>
+                    </div>
+
+                    <div class="api-meta-row">
+                        <span style="color:#e8eaed;" id="resProtocolStatus">HTTP/1.1 --- (Waiting)</span>
+                        <span style="color:var(--google-yellow);" id="resLatency">0.0ms</span>
+                    </div>
+
+                    <div class="api-headers-block">
+                        <div><span>content-type:</span> application/x-ndjson</div>
+                        <div><span>transfer-encoding:</span> chunked</div>
+                        <div><span>x-ollama-model:</span> <span id="resHeaderModel">llama3.2:3b</span></div>
+                    </div>
+
+                    <!-- Raw Stream Output Lines -->
+                    <div class="api-stream-block" id="apiStreamBlock">
+                        <div class="stream-line">
+                            <span class="stream-line-num">0</span>
+                            <span class="stream-line-content" style="color:var(--text-secondary);">// Siap menerima raw streaming chunks dari /api/generate...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Executable cURL Box -->
+                <div class="curl-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600; color:#ffffff;"><i class="fa-solid fa-terminal"></i> Equivalent cURL Command:</span>
+                    </div>
+                    <pre id="curlCommand">curl -N -X POST http://localhost:8000/generate/stream \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Hello"}'</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Teks disalin ke clipboard!</div>
+
+    <script>
+        const promptInput = document.getElementById('promptInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const messageGroup = document.getElementById('messageGroup');
+        const welcomeHero = document.getElementById('welcomeHero');
+        const clearBtn = document.getElementById('clearBtn');
+        const modelBadge = document.getElementById('modelBadge');
+        const toast = document.getElementById('toast');
+        const chatPane = document.getElementById('chatPane');
+
+        // Split Panel Elements
+        const toggleSplitBtn = document.getElementById('toggleSplitBtn');
+        const closeInspectorBtn = document.getElementById('closeInspectorBtn');
+        const workspaceGrid = document.getElementById('workspaceGrid');
+        const clearApiLogsBtn = document.getElementById('clearApiLogsBtn');
+        const copyCurlBtn = document.getElementById('copyCurlBtn');
+
+        // Backend Inspector DOM Elements
+        const reqBodyJson = document.getElementById('reqBodyJson');
+        const resStatusBadge = document.getElementById('resStatusBadge');
+        const resProtocolStatus = document.getElementById('resProtocolStatus');
+        const resLatency = document.getElementById('resLatency');
+        const resHeaderModel = document.getElementById('resHeaderModel');
+        const apiStreamBlock = document.getElementById('apiStreamBlock');
+        const streamCounter = document.getElementById('streamCounter');
+        const curlCommand = document.getElementById('curlCommand');
+
+        let lastPrompt = 'Hello';
+        let currentModel = 'llama3.2:3b';
+
+        // Toggle Split Page View
+        toggleSplitBtn.addEventListener('click', () => {
+            workspaceGrid.classList.toggle('split-active');
+            toggleSplitBtn.classList.toggle('active');
+        });
+
+        closeInspectorBtn.addEventListener('click', () => {
+            workspaceGrid.classList.remove('split-active');
+            toggleSplitBtn.classList.remove('active');
+        });
+
+        clearApiLogsBtn.addEventListener('click', () => {
+            apiStreamBlock.innerHTML = `
+                <div class="stream-line">
+                    <span class="stream-line-num">0</span>
+                    <span class="stream-line-content" style="color:#5f6368;">// Log streaming dibersihkan.</span>
+                </div>
+            `;
+            streamCounter.textContent = '0 chunks';
+            resStatusBadge.className = 'badge-status status-idle';
+            resStatusBadge.textContent = 'IDLE';
+            resProtocolStatus.textContent = 'HTTP/1.1 --- (Waiting)';
+            resLatency.textContent = '0.0ms';
+        });
+
+        copyCurlBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(curlCommand.textContent).then(() => {
+                showToast("cURL command disalin ke clipboard!");
+            });
+        });
+
+        // Auto-expand textarea
+        promptInput.addEventListener('input', () => {
+            promptInput.style.height = 'auto';
+            promptInput.style.height = Math.min(promptInput.scrollHeight, 160) + 'px';
+        });
+
+        // Submit on Enter (without Shift)
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        clearBtn.addEventListener('click', () => {
+            messageGroup.innerHTML = '';
+            welcomeHero.style.display = 'block';
+            promptInput.value = '';
+            promptInput.focus();
+        });
+
+        function usePrompt(text) {
+            promptInput.value = text;
+            promptInput.style.height = 'auto';
+            promptInput.style.height = promptInput.scrollHeight + 'px';
+            promptInput.focus();
+            sendMessage();
+        }
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function appendStreamLine(lineNum, rawJsonString, isDone = false, isError = false) {
+            const lineEl = document.createElement('div');
+            lineEl.className = 'stream-line';
+
+            let contentHtml = '';
+            if (isDone) {
+                contentHtml = `<span class="chunk-done">${escapeHtml(rawJsonString)}</span>`;
+            } else if (isError) {
+                contentHtml = `<span class="chunk-error">${escapeHtml(rawJsonString)}</span>`;
+            } else {
+                contentHtml = `<span class="chunk-token">${escapeHtml(rawJsonString)}</span>`;
+            }
+
+            lineEl.innerHTML = `
+                <span class="stream-line-num">${lineNum}</span>
+                <span class="stream-line-content">${contentHtml}</span>
+            `;
+            apiStreamBlock.appendChild(lineEl);
+            apiStreamBlock.scrollTop = apiStreamBlock.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const prompt = promptInput.value.trim();
+            if (!prompt) return;
+
+            welcomeHero.style.display = 'none';
+            lastPrompt = prompt;
+
+            // Update Outgoing Request Box
+            const payloadObject = {
+                model: currentModel,
+                prompt: prompt,
+                stream: true
+            };
+            reqBodyJson.textContent = JSON.stringify(payloadObject, null, 2);
+
+            // Update cURL Box
+            curlCommand.textContent = `curl -N -X POST http://localhost:8000/generate/stream \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify({ prompt: prompt })}'`;
+
+            // Reset Stream Output Box
+            apiStreamBlock.innerHTML = '';
+            streamCounter.textContent = '0 chunks';
+            resStatusBadge.className = 'badge-status status-pending';
+            resStatusBadge.textContent = 'CONNECTING';
+            resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Streaming)';
+            resLatency.textContent = '...';
+
+            // Append user message to left chat
+            appendUserMessage(prompt);
+            promptInput.value = '';
+            promptInput.style.height = 'auto';
+            promptInput.disabled = true;
+            sendBtn.disabled = true;
+
+            const startTime = performance.now();
+            let chunkIndex = 0;
+            let fullText = '';
+
+            // Append AI message container with live stream cursor
+            const { messageContentEl, bodyEl } = appendStreamingAiBubble();
+            chatPane.scrollTo({ top: chatPane.scrollHeight, behavior: 'smooth' });
+
+            try {
+                const response = await fetch('/generate/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const ttfb = (performance.now() - startTime).toFixed(1);
+                resLatency.textContent = `${ttfb}ms TTFB`;
+
+                if (!response.ok) {
+                    resStatusBadge.className = 'badge-status status-error';
+                    resStatusBadge.textContent = `${response.status} ERROR`;
+                    resProtocolStatus.textContent = `HTTP/1.1 ${response.status} ${response.statusText}`;
+                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
+                }
+
+                resStatusBadge.className = 'badge-status status-200';
+                resStatusBadge.textContent = '200 STREAMING';
+                resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Transfer-Encoding: chunked)';
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let buffer = '';
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (!line.trim()) continue;
+                        chunkIndex++;
+                        streamCounter.textContent = `${chunkIndex} chunks`;
+
+                        try {
+                            const parsed = JSON.parse(line);
+
+                            if (parsed.error) {
+                                throw new Error(parsed.error);
+                            }
+
+                            if (parsed.model) {
+                                currentModel = parsed.model;
+                                modelBadge.textContent = currentModel;
+                                resHeaderModel.textContent = currentModel;
+                            }
+
+                            if (parsed.response) {
+                                fullText += parsed.response;
+                                bodyEl.textContent = fullText;
+                                chatPane.scrollTop = chatPane.scrollHeight;
+
+                                // Show raw NDJSON line directly
+                                appendStreamLine(chunkIndex, line, false, false);
+                            }
+
+                            if (parsed.done) {
+                                const totalMs = (performance.now() - startTime).toFixed(1);
+                                resLatency.textContent = `${totalMs}ms Total`;
+                                resStatusBadge.className = 'badge-status status-200';
+                                resStatusBadge.textContent = '200 DONE';
+                                appendStreamLine(chunkIndex, line, true, false);
+                            }
+                        } catch (e) {
+                            if (e.message && e.message.includes('Ollama error')) {
+                                throw e;
+                            }
+                        }
+                    }
+                }
+
+                finalizeAiBubble(messageContentEl, bodyEl, fullText, currentModel);
+
+            } catch (err) {
+                resStatusBadge.className = 'badge-status status-error';
+                resStatusBadge.textContent = 'ERROR';
+                resProtocolStatus.textContent = 'HTTP/1.1 Connection Failed';
+                appendStreamLine(chunkIndex + 1, `{"error": "${err.message}"}`, false, true);
+                bodyEl.innerHTML = `<span style="color:#f28b82;">⚠️ Terjadi kesalahan: ${escapeHtml(err.message)}</span>`;
+            } finally {
+                promptInput.disabled = false;
+                sendBtn.disabled = false;
+                promptInput.focus();
+                chatPane.scrollTop = chatPane.scrollHeight;
+            }
+        }
+
+        function appendUserMessage(text) {
+            const msgEl = document.createElement('div');
+            msgEl.className = 'message';
+            msgEl.innerHTML = `
+                <div class="message-avatar user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="message-content user-message">
+                    <div class="message-header">
+                        <span>Anda</span>
+                        <span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div class="message-body">${escapeHtml(text)}</div>
+                </div>
+            `;
+            messageGroup.appendChild(msgEl);
+        }
+
+        function appendStreamingAiBubble() {
+            const msgEl = document.createElement('div');
+            msgEl.className = 'message';
+            msgEl.innerHTML = `
+                <div class="message-avatar ai-avatar">
+                    <!-- Google Developers Bracket Symbol -->
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 6L3 12L8 18" stroke="#4285F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 6L21 12L16 18" stroke="#34A853" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="message-content ai-message">
+                    <div class="message-header">
+                        <span class="message-model">Ollama (Streaming Response...)</span>
+                        <span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div class="message-body"><span class="body-text"></span><span class="cursor-blink"></span></div>
+                </div>
+            `;
+            messageGroup.appendChild(msgEl);
+            const messageContentEl = msgEl.querySelector('.message-content');
+            const bodyEl = msgEl.querySelector('.body-text');
+            return { messageContentEl, bodyEl };
+        }
+
+        function finalizeAiBubble(contentEl, bodyEl, text, model) {
+            const cursor = contentEl.querySelector('.cursor-blink');
+            if (cursor) cursor.remove();
+
+            const modelLabel = contentEl.querySelector('.message-model');
+            if (modelLabel) modelLabel.textContent = model;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
