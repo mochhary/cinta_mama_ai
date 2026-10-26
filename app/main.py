@@ -6,7 +6,19 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 import httpx
 from pydantic import BaseModel
 
-app = FastAPI(title="Ollama Docker API")
+try:
+    from app.system_prompt import SYSTEM_PROMPT
+except ImportError:
+    try:
+        from system_prompt import SYSTEM_PROMPT
+    except ImportError:
+        SYSTEM_PROMPT = "Kamu adalah CintaMamaAI, asisten AI yang hangat, penuh kasih, dan bijaksana untuk keluarga."
+
+app = FastAPI(
+    title="CintaMamaAI API",
+    description="Backend service & RAG Web UI untuk asisten dokumentasi bahasa pemrograman populer up-to-date bertenaga Ollama & FastAPI",
+    version="1.0.0",
+)
 
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATE_PATH = BASE_DIR / "templates" / "index.html"
@@ -47,6 +59,7 @@ async def call_ollama_generate(prompt: str):
         payload = {
             "model": selected_model,
             "prompt": prompt,
+            "system": SYSTEM_PROMPT,
             "stream": False,
         }
 
@@ -56,6 +69,7 @@ async def call_ollama_generate(prompt: str):
             data = response.json()
             return {
                 "status": "success",
+                "brand": "CintaMamaAI",
                 "model": selected_model,
                 "response": data.get("response", ""),
                 "done": data.get("done", True),
@@ -81,16 +95,20 @@ async def call_ollama_generate(prompt: str):
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui():
-    """Menampilkan Web UI chat interaktif modern."""
+    """Menampilkan Web UI chat interaktif modern CintaMamaAI."""
     if TEMPLATE_PATH.exists():
         return HTMLResponse(content=TEMPLATE_PATH.read_text(encoding="utf-8"))
-    return HTMLResponse(content="<h1>Ollama API is running. UI template not found.</h1>")
+    return HTMLResponse(content="<h1>CintaMamaAI API is running. UI template not found.</h1>")
 
 
 @app.get("/health")
 @app.get("/test")
 def health_check():
-    return {"status": "ok", "message": "Service is healthy"}
+    return {
+        "status": "ok",
+        "service": "CintaMamaAI",
+        "message": "Service is healthy and ready",
+    }
 
 
 @app.post("/generate")
@@ -105,7 +123,7 @@ async def generate_get(prompt: str):
 
 @app.post("/generate/stream")
 async def generate_stream_endpoint(request: GenerateRequest):
-    """Stream token dan telemetri langsung dari Ollama baris demi baris."""
+    """Stream token dan telemetri langsung dari Ollama baris demi baris dengan persona CintaMamaAI."""
     async with httpx.AsyncClient(timeout=120.0) as check_client:
         selected_model = await get_available_model(check_client)
 
@@ -113,6 +131,7 @@ async def generate_stream_endpoint(request: GenerateRequest):
     payload = {
         "model": selected_model,
         "prompt": request.prompt,
+        "system": SYSTEM_PROMPT,
         "stream": True,
     }
 

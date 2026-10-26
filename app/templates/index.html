@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GDG Ollama AI - Google Developer Groups Workspace</title>
-    <!-- Google Fonts: Google Sans / Product Sans vibe with Plus Jakarta Sans & JetBrains Mono -->
+    <title>CintaMamaAI - Popular Programming Languages Docs & Syntax RAG</title>
+    <!-- Google Fonts: Google Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Highlight.js for Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         :root {
-            /* GDG / Google Brand Colors */
+            /* 4 Signature Colors (Google/GDG Palette) */
             --google-blue: #4285F4;
             --google-red: #EA4335;
             --google-yellow: #FBBC04;
             --google-green: #34A853;
             --google-blue-dark: #1a73e8;
 
-            /* Google Dark Material Theme (Material 3 Dark) */
+            /* Material 3 Dark Theme */
             --bg-base: #1f2125;
             --bg-surface: #282a2f;
             --bg-card: #303238;
@@ -49,17 +54,17 @@
             overflow-x: hidden;
         }
 
-        /* Iconic GDG 4-Color Accent Top Bar */
-        .gdg-color-strip {
+        /* 4-Color Accent Top Bar */
+        .color-strip {
             height: 4px;
             width: 100%;
             display: flex;
         }
 
-        .gdg-color-strip .c-blue { flex: 1; background-color: var(--google-blue); }
-        .gdg-color-strip .c-red { flex: 1; background-color: var(--google-red); }
-        .gdg-color-strip .c-yellow { flex: 1; background-color: var(--google-yellow); }
-        .gdg-color-strip .c-green { flex: 1; background-color: var(--google-green); }
+        .color-strip .c-blue { flex: 1; background-color: var(--google-blue); }
+        .color-strip .c-red { flex: 1; background-color: var(--google-red); }
+        .color-strip .c-yellow { flex: 1; background-color: var(--google-yellow); }
+        .color-strip .c-green { flex: 1; background-color: var(--google-green); }
 
         /* Header Navigation */
         header {
@@ -80,25 +85,40 @@
             gap: 0.85rem;
         }
 
-        /* GDG Logo Icon */
-        .gdg-logo-svg {
+        /* CintaMamaAI Logo */
+        .brand-logo-svg {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .brand-text h1 {
-            font-size: 1.05rem;
+            font-size: 1.08rem;
             font-weight: 700;
             color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
         }
 
-        .brand-text h1 span.gdg-txt {
+        .brand-text h1 span.brand-name {
             color: #ffffff;
             font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .brand-text h1 span.brand-name .brand-ai {
+            background: linear-gradient(135deg, var(--google-blue), var(--google-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            margin-left: 1px;
+        }
+
+        .brand-text h1 span.brand-tagline {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
         }
 
         .brand-text p {
@@ -126,6 +146,19 @@
             font-weight: 500;
         }
 
+        .docs-rag-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(66, 133, 244, 0.12);
+            border: 1px solid rgba(66, 133, 244, 0.3);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.76rem;
+            color: #8ab4f8;
+            font-weight: 500;
+        }
+
         .status-dot {
             width: 7px;
             height: 7px;
@@ -134,8 +167,8 @@
             box-shadow: 0 0 8px var(--google-green);
         }
 
-        /* GDG Split Toggle Button */
-        .btn-gdg-split {
+        /* Split Toggle Button */
+        .btn-split {
             display: flex;
             align-items: center;
             gap: 0.55rem;
@@ -150,12 +183,12 @@
             transition: all 0.2s ease;
         }
 
-        .btn-gdg-split:hover {
+        .btn-split:hover {
             background: #3c4043;
             border-color: var(--google-blue);
         }
 
-        .btn-gdg-split.active {
+        .btn-split.active {
             background: rgba(66, 133, 244, 0.18);
             border-color: var(--google-blue);
             color: #8ab4f8;
@@ -224,25 +257,25 @@
             gap: 1.25rem;
         }
 
-        /* GDG Community Hero Screen */
+        /* CintaMamaAI Welcome Hero Screen */
         .welcome-hero {
             text-align: center;
             margin: 2.5rem auto 1.5rem;
-            max-width: 560px;
+            max-width: 580px;
             animation: fadeIn 0.4s ease-out;
         }
 
-        .gdg-banner-badge {
+        .banner-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(66, 133, 244, 0.1);
-            border: 1px solid rgba(66, 133, 244, 0.3);
+            background: rgba(234, 67, 53, 0.12);
+            border: 1px solid rgba(234, 67, 53, 0.3);
             border-radius: 9999px;
-            padding: 0.3rem 0.85rem;
+            padding: 0.35rem 0.95rem;
             margin-bottom: 1.25rem;
             font-size: 0.78rem;
-            color: #8ab4f8;
+            color: #f28b82;
             font-weight: 500;
         }
 
@@ -282,13 +315,29 @@
         }
 
         .chip.c-blue i { color: var(--google-blue); }
+        .chip.c-red i { color: var(--google-red); }
         .chip.c-green i { color: var(--google-green); }
         .chip.c-yellow i { color: var(--google-yellow); }
+
+        .chip-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            overflow: hidden;
+        }
 
         .chip-text {
             font-size: 0.82rem;
             color: var(--text-primary);
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        .chip-sub {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .chip:hover {
@@ -376,8 +425,117 @@
         }
 
         .message-body {
-            white-space: pre-wrap;
+            line-height: 1.6;
             word-break: break-word;
+        }
+
+        .user-message .message-body {
+            white-space: pre-wrap;
+        }
+
+        /* Modern Code Block Styling for Programming Docs */
+        .ai-message .message-body pre {
+            background: #141518;
+            border: 1px solid var(--border-google);
+            border-radius: 8px;
+            margin: 0.75rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1c1e22;
+            padding: 0.35rem 0.85rem;
+            border-bottom: 1px solid var(--border-google);
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-copy-code {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-copy-code:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-message .message-body pre code {
+            display: block;
+            padding: 0.85rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.55;
+            color: #e8eaed;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .ai-message .message-body :not(pre) > code {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f28b82;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+        }
+
+        .ai-message .message-body p {
+            margin-bottom: 0.65rem;
+        }
+
+        .ai-message .message-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-message .message-body ul, .ai-message .message-body ol {
+            padding-left: 1.3rem;
+            margin: 0.5rem 0;
+        }
+
+        .ai-message .message-body li {
+            margin-bottom: 0.25rem;
+        }
+
+        .ai-message .message-body h1,
+        .ai-message .message-body h2,
+        .ai-message .message-body h3,
+        .ai-message .message-body h4 {
+            color: #ffffff;
+            margin: 0.9rem 0 0.4rem;
+            font-weight: 700;
+        }
+
+        .ai-message .message-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0.75rem 0;
+            font-size: 0.82rem;
+        }
+
+        .ai-message .message-body th, .ai-message .message-body td {
+            border: 1px solid var(--border-google);
+            padding: 0.4rem 0.65rem;
+            text-align: left;
+        }
+
+        .ai-message .message-body th {
+            background: #1c1e22;
+            color: #ffffff;
         }
 
         .cursor-blink {
@@ -485,7 +643,7 @@
         }
 
         /* ========================================================
-           RIGHT PANEL: GDG / GOOGLE CLOUD STYLE BACKEND API INSPECTOR
+           RIGHT PANEL: CINTAMAMAAI BACKEND API INSPECTOR
            ======================================================== */
         .inspector-pane {
             width: 0;
@@ -525,7 +683,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .inspector-title span.gdg-tag {
+        .inspector-title span.brand-tag {
             color: var(--google-blue);
         }
 
@@ -772,8 +930,8 @@
     </style>
 </head>
 <body>
-    <!-- GDG 4-Color Signature Top Strip -->
-    <div class="gdg-color-strip">
+    <!-- 4-Color Signature Top Strip -->
+    <div class="color-strip">
         <div class="c-blue"></div>
         <div class="c-red"></div>
         <div class="c-yellow"></div>
@@ -783,33 +941,42 @@
     <!-- Header -->
     <header>
         <div class="brand-container">
-            <!-- Official GDG Brackets SVG Logo -->
-            <div class="gdg-logo-svg">
-                <svg width="34" height="22" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Left Bracket: Google Blue & Google Red -->
-                    <path d="M12.5 3.5L4 12L12.5 20.5" stroke="#4285F4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12.5 3.5L4 12" stroke="#EA4335" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Right Bracket: Google Yellow & Google Green -->
-                    <path d="M27.5 3.5L36 12L27.5 20.5" stroke="#34A853" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M27.5 3.5L36 12" stroke="#FBBC04" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- CintaMamaAI Custom Developer SVG Logo (< / > with AI Heart) -->
+            <div class="brand-logo-svg">
+                <svg width="38" height="38" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Left Code Bracket (Google Blue & Red) -->
+                    <path d="M13 10L5 22L13 34" stroke="#4285F4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M13 10L5 22" stroke="#EA4335" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Right Code Bracket (Google Green & Yellow) -->
+                    <path d="M31 10L39 22L31 34" stroke="#34A853" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M31 10L39 22" stroke="#FBBC04" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Center Maternal AI Heart & Node -->
+                    <path d="M22 28.5C22 28.5 15.5 23.5 15.5 17.5C15.5 14.8 17.6 12.8 20.2 12.8C21.6 12.8 21.8 13.8 22 13.8C22.2 13.8 22.4 12.8 23.8 12.8C26.4 12.8 28.5 14.8 28.5 17.5C28.5 23.5 22 28.5 22 28.5Z" fill="#EA4335" fill-opacity="0.25" stroke="#EA4335" stroke-width="1.8"/>
+                    <circle cx="22" cy="18" r="2.8" fill="#FBBC04"/>
+                    <path d="M22 13V15M22 21V23M17 18H19M25 18H27" stroke="#34A853" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </div>
             <div class="brand-text">
                 <h1>
-                    <span class="gdg-txt">Google Developer Groups</span>
-                    <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">| Ollama AI</span>
+                    <span class="brand-name">CintaMama<span class="brand-ai">AI</span></span>
+                    <span class="brand-tagline">| Popular Languages Docs & Syntax RAG</span>
                 </h1>
-                <p>FastAPI Docker Container • Community AI Workspace</p>
+                <p>FastAPI Docker • Up-to-Date Popular Programming Languages Documentation Assistant</p>
             </div>
         </div>
 
         <div class="header-actions">
-            <!-- Split Screen Button for GDG Backend API View -->
-            <button class="btn-gdg-split active" id="toggleSplitBtn" title="Buka/Tutup panel live request & response API Ollama">
+            <!-- Split Screen Button for Live API Inspector -->
+            <button class="btn-split active" id="toggleSplitBtn" title="Buka/Tutup panel live request, streaming & RAG inspector">
                 <i class="fa-solid fa-code"></i>
-                <span>API Inspector</span>
+                <span>RAG & API Inspector</span>
                 <span class="badge-stream">STREAM</span>
             </button>
+
+            <div class="docs-rag-badge">
+                <i class="fa-solid fa-code"></i>
+                <span>Languages Docs RAG</span>
+            </div>
 
             <div class="status-badge">
                 <div class="status-dot"></div>
@@ -831,27 +998,43 @@
         <!-- Left: Chat Panel -->
         <div class="chat-pane" id="chatPane">
             <div class="chat-container">
-                <!-- GDG Welcome Hero -->
+                <!-- Welcome Hero for Popular Programming Languages Docs RAG -->
                 <div class="welcome-hero" id="welcomeHero">
-                    <div class="gdg-banner-badge">
-                        <i class="fa-solid fa-sparkles" style="color:var(--google-yellow);"></i>
-                        <span>GDG Developer Session • GenAI on Docker</span>
+                    <div class="banner-badge">
+                        <i class="fa-solid fa-code" style="color:var(--google-blue);"></i>
+                        <span>CintaMamaAI • Popular Programming Languages Docs RAG</span>
                     </div>
-                    <h2>Build with Google Developer Groups</h2>
-                    <p>Eksplorasi LLM lokal (<strong>llama3.2:3b</strong>) melalui FastAPI & Docker. Pantau streaming raw data API secara langsung di panel sebelah kanan.</p>
+                    <h2>Tanyakan Dokumentasi & Sintaks Bahasa Pemrograman</h2>
+                    <p>Asisten AI cerdas berbasis <strong>Retrieval-Augmented Generation (RAG)</strong> bertenaga <strong>llama3.2:3b</strong> di Docker yang berfokus secara murni pada dokumentasi resmi dan sintaks bahasa pemrograman populer (Python, TypeScript, Go, Rust, Java, C++, dll.). Cari referensi fungsi standard library, fitur versi terbaru, hingga contoh penulisan kode bersih.</p>
 
                     <div class="prompt-chips">
-                        <div class="chip c-blue" onclick="usePrompt('Apa itu Google Developer Groups (GDG) dan kegiatannya bagi developer?')">
-                            <i class="fa-solid fa-users"></i>
-                            <span class="chip-text">Tentang GDG Community</span>
+                        <div class="chip c-blue" onclick="usePrompt('Bagaimana cara kerja sintaks Type Parameter (Generics PEP 695) dan structural pattern matching di Python 3.12+?')">
+                            <i class="fa-brands fa-python"></i>
+                            <div class="chip-body">
+                                <span class="chip-text">Python 3.12+</span>
+                                <span class="chip-sub">Generics PEP 695 & Pattern Matching</span>
+                            </div>
                         </div>
-                        <div class="chip c-green" onclick="usePrompt('Jelaskan cara integrasi Ollama API di dalam container Docker menggunakan FastAPI!')">
-                            <i class="fa-brands fa-docker"></i>
-                            <span class="chip-text">FastAPI & Docker Ollama</span>
+                        <div class="chip c-red" onclick="usePrompt('Jelaskan cara kerja const type parameters, satisfies operator, dan discriminated unions di TypeScript modern!')">
+                            <i class="fa-brands fa-js"></i>
+                            <div class="chip-body">
+                                <span class="chip-text">TypeScript & JS</span>
+                                <span class="chip-sub">Satisfies Operator & Type Narrowing</span>
+                            </div>
                         </div>
-                        <div class="chip c-yellow" onclick="usePrompt('Bagaimana cara kerja response streaming HTTP chunked pada LLM?')">
-                            <i class="fa-solid fa-bolt"></i>
-                            <span class="chip-text">Streaming LLM Chunks</span>
+                        <div class="chip c-yellow" onclick="usePrompt('Bagaimana cara kerja goroutines, buffered channels, dan fitur loop range over func/int di bahasa Go terbaru?')">
+                            <i class="fa-brands fa-golang"></i>
+                            <div class="chip-body">
+                                <span class="chip-text">Go (Golang)</span>
+                                <span class="chip-sub">Goroutines, Channels & Range-over-func</span>
+                            </div>
+                        </div>
+                        <div class="chip c-green" onclick="usePrompt('Jelaskan konsep ownership, borrowing rules, dan error handling dengan Result & Option di bahasa pemrograman Rust!')">
+                            <i class="fa-brands fa-rust"></i>
+                            <div class="chip-body">
+                                <span class="chip-text">Rust Language</span>
+                                <span class="chip-sub">Ownership, Borrowing & Error Handling</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -859,27 +1042,27 @@
                 <div class="message-group" id="messageGroup"></div>
             </div>
 
-            <!-- Fixed Input Dock: Google Capsule Style -->
+            <!-- Fixed Input Dock: Floating Pill -->
             <div class="input-dock">
                 <div class="input-card">
                     <textarea 
                         id="promptInput" 
                         rows="1" 
-                        placeholder="Ketik prompt untuk dikirim ke API Ollama... (Shift+Enter untuk baris baru)"
+                        placeholder="Tanyakan sintaks bahasa pemrograman (Python, TypeScript, Go, Rust, Java, C++, dll.), standard library, atau fitur versi terkini... (Shift+Enter untuk baris baru)"
                     ></textarea>
-                    <button class="btn-send" id="sendBtn" title="Kirim ke API">
+                    <button class="btn-send" id="sendBtn" title="Kirim ke CintaMamaAI">
                         <i class="fa-solid fa-arrow-up"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Right: GDG Cloud Style Backend API Inspector Split Pane -->
+        <!-- Right: Backend API Inspector Split Pane -->
         <div class="inspector-pane" id="inspectorPane">
             <div class="inspector-header">
                 <div class="inspector-title">
-                    <span class="gdg-tag">&lt;/&gt;</span>
-                    <span>OLLAMA BACKEND API INSPECTOR</span>
+                    <span class="brand-tag">&lt;/&gt;</span>
+                    <span>CINTAMAMAAI DEV & RAG INSPECTOR</span>
                 </div>
                 <div class="inspector-actions">
                     <button class="inspector-btn" id="copyCurlBtn" title="Salin perintah cURL">
@@ -1247,15 +1430,19 @@
             msgEl.className = 'message';
             msgEl.innerHTML = `
                 <div class="message-avatar ai-avatar">
-                    <!-- Google Developers Bracket Symbol -->
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                        <path d="M8 6L3 12L8 18" stroke="#4285F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M16 6L21 12L16 18" stroke="#34A853" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- CintaMamaAI Developer Bracket & Heart Symbol -->
+                    <svg width="22" height="22" viewBox="0 0 44 44" fill="none">
+                        <path d="M13 10L5 22L13 34" stroke="#4285F4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13 10L5 22" stroke="#EA4335" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M31 10L39 22L31 34" stroke="#34A853" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M31 10L39 22" stroke="#FBBC04" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22 28.5C22 28.5 15.5 23.5 15.5 17.5C15.5 14.8 17.6 12.8 20.2 12.8C21.6 12.8 21.8 13.8 22 13.8C22.2 13.8 22.4 12.8 23.8 12.8C26.4 12.8 28.5 14.8 28.5 17.5C28.5 23.5 22 28.5 22 28.5Z" fill="#EA4335" fill-opacity="0.25" stroke="#EA4335" stroke-width="1.8"/>
+                        <circle cx="22" cy="18" r="2.8" fill="#FBBC04"/>
                     </svg>
                 </div>
                 <div class="message-content ai-message">
                     <div class="message-header">
-                        <span class="message-model">Ollama (Streaming Response...)</span>
+                        <span class="message-model">CintaMamaAI (Streaming...)</span>
                         <span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     <div class="message-body"><span class="body-text"></span><span class="cursor-blink"></span></div>
@@ -1272,7 +1459,46 @@
             if (cursor) cursor.remove();
 
             const modelLabel = contentEl.querySelector('.message-model');
-            if (modelLabel) modelLabel.textContent = model;
+            if (modelLabel) modelLabel.textContent = `CintaMamaAI • ${model}`;
+
+            // Render Markdown & Code Highlighting for Developer Docs
+            if (window.marked && text) {
+                try {
+                    bodyEl.innerHTML = marked.parse(text);
+
+                    // Add syntax highlighting and copy buttons to code blocks
+                    bodyEl.querySelectorAll('pre code').forEach((block) => {
+                        if (window.hljs) hljs.highlightElement(block);
+                        const pre = block.parentElement;
+                        
+                        let lang = 'code';
+                        const match = block.className.match(/language-(\w+)/);
+                        if (match) lang = match[1];
+
+                        const headerBar = document.createElement('div');
+                        headerBar.className = 'code-header-bar';
+                        headerBar.innerHTML = `
+                            <span><i class="fa-solid fa-code"></i> ${lang.toUpperCase()}</span>
+                            <button class="btn-copy-code" title="Salin kode">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                        `;
+                        const copyBtn = headerBar.querySelector('.btn-copy-code');
+                        copyBtn.addEventListener('click', () => {
+                            navigator.clipboard.writeText(block.innerText).then(() => {
+                                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                                setTimeout(() => {
+                                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+                                }, 2000);
+                            });
+                        });
+                        pre.insertBefore(headerBar, block);
+                    });
+                } catch (e) {
+                    console.error("Markdown parse error:", e);
+                    bodyEl.textContent = text;
+                }
+            }
         }
 
         function escapeHtml(str) {
