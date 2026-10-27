@@ -13,6 +13,11 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Dict, List, Any
 
+try:
+    from scripts.pdf_exporter import export_records_to_pdf
+except ImportError:
+    from pdf_exporter import export_records_to_pdf
+
 # Target dokumen resmi Java (Sintaks, Tooling, Instalasi JDK, dan Fitur Versi Modern)
 DOC_TARGETS = [
     # ========================================================
@@ -415,6 +420,7 @@ def main():
 
     output_dir = Path("data")
     output_dir.mkdir(exist_ok=True)
+    pdf_file = output_dir / "java_docs.pdf"
     csv_file = output_dir / "java_docs.csv"
 
     all_records: List[Dict[str, Any]] = []
@@ -445,7 +451,28 @@ def main():
         code_count = sum(1 for p in parsed if p["code_snippet"])
         print(f"       ✓ {len(parsed)} section/chunk ({code_count} ada kode/CLI)")
 
-    print("\n💾 Menyimpan dataset lengkap Java ke CSV...")
+    formatted_records = []
+    for i, rec in enumerate(all_records, 1):
+        formatted_records.append({
+            "doc_id": f"java_{i:03d}",
+            "language": "Java",
+            "category": rec["category"],
+            "main_title": rec["main_title"],
+            "section_title": rec["section_title"],
+            "source_url": rec["source_url"],
+            "text_content": rec["text_content"],
+            "code_snippet": rec["code_snippet"],
+        })
+
+    print("\n📄 Menyimpan dataset lengkap Java ke PDF...")
+    export_records_to_pdf(
+        formatted_records,
+        pdf_file,
+        title="Dokumentasi Resmi & Sintaks Java",
+        language="Java",
+    )
+
+    # Simpan juga backup CSV
     fieldnames = [
         "doc_id",
         "language",
@@ -456,29 +483,17 @@ def main():
         "text_content",
         "code_snippet",
     ]
-
     with open(csv_file, mode="w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
+        writer.writerows(formatted_records)
 
-        for i, rec in enumerate(all_records, 1):
-            writer.writerow({
-                "doc_id": f"java_{i:03d}",
-                "language": "Java",
-                "category": rec["category"],
-                "main_title": rec["main_title"],
-                "section_title": rec["section_title"],
-                "source_url": rec["source_url"],
-                "text_content": rec["text_content"],
-                "code_snippet": rec["code_snippet"],
-            })
-
-    print(f"\n🎉 DATASET JAVA LENGKAP SELESAI DIBUAT!")
-    print(f"📁 Lokasi File : {csv_file.resolve()}")
-    print(f"📊 Total Baris : {len(all_records)} dokumen/chunk Java")
+    print(f"\n🎉 DATASET JAVA LENGKAP SELESAI DIBUAT DALAM FORMAT PDF!")
+    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
+    print(f"📊 Total Dokumen   : {len(all_records)} chunk/section Java")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode  : {code_total} section memiliki contoh kode Java / perintah CLI")
-    print(f"📦 Ukuran File : {os.path.getsize(csv_file) / 1024:.2f} KB")
+    print(f"💻 Total Kode      : {code_total} section memiliki contoh kode Java / perintah CLI")
+    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

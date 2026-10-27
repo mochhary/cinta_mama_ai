@@ -8,7 +8,12 @@ import re
 import os
 import urllib.request
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Any
+
+try:
+    from scripts.pdf_exporter import export_records_to_pdf
+except ImportError:
+    from pdf_exporter import export_records_to_pdf
 
 # URL dasar repositori resmi Microsoft dotnet/docs di GitHub Raw
 RAW_BASE_URL = "https://raw.githubusercontent.com/dotnet/docs/main/docs"
@@ -291,6 +296,7 @@ def main():
 
     output_dir = Path("data")
     output_dir.mkdir(exist_ok=True)
+    pdf_file = output_dir / "csharp_docs.pdf"
     csv_file = output_dir / "csharp_docs.csv"
 
     all_records = []
@@ -309,7 +315,28 @@ def main():
         code_count = sum(1 for s in sections if s["code_snippet"])
         print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh kode/CLI)")
 
-    print("\n💾 Menyimpan dataset lengkap ke CSV...")
+    formatted_records = []
+    for idx, rec in enumerate(all_records, 1):
+        formatted_records.append({
+            "doc_id": f"csharp_{idx:03d}",
+            "language": "C#",
+            "category": rec["category"],
+            "main_title": rec["main_title"],
+            "section_title": rec["section_title"],
+            "source_url": rec["source_url"],
+            "text_content": rec["text_content"],
+            "code_snippet": rec["code_snippet"],
+        })
+
+    print("\n📄 Menyimpan dataset lengkap ke PDF...")
+    export_records_to_pdf(
+        formatted_records,
+        pdf_file,
+        title="Dokumentasi Resmi & Sintaks C#",
+        language="C#",
+    )
+
+    # Simpan juga backup CSV
     fieldnames = [
         "doc_id",
         "language",
@@ -320,29 +347,17 @@ def main():
         "text_content",
         "code_snippet",
     ]
-
     with open(csv_file, mode="w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
+        writer.writerows(formatted_records)
 
-        for idx, rec in enumerate(all_records, 1):
-            writer.writerow({
-                "doc_id": f"csharp_{idx:03d}",
-                "language": "C#",
-                "category": rec["category"],
-                "main_title": rec["main_title"],
-                "section_title": rec["section_title"],
-                "source_url": rec["source_url"],
-                "text_content": rec["text_content"],
-                "code_snippet": rec["code_snippet"],
-            })
-
-    print(f"\n🎉 DATASET C# LENGKAP SELESAI DIBUAT!")
-    print(f"📁 Lokasi File : {csv_file.resolve()}")
-    print(f"📊 Total Baris : {len(all_records)} dokumen/chunk C#")
+    print(f"\n🎉 DATASET C# LENGKAP SELESAI DIBUAT DALAM FORMAT PDF!")
+    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
+    print(f"📊 Total Dokumen   : {len(all_records)} chunk/section C#")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode  : {code_total} section memiliki snippet kode C# / perintah CLI")
-    print(f"📦 Ukuran File : {os.path.getsize(csv_file) / 1024:.2f} KB")
+    print(f"💻 Total Kode      : {code_total} section memiliki snippet kode C# / perintah CLI")
+    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":
