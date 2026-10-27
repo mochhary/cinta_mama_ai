@@ -10,20 +10,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   api:
     build: .
     ports:
       - "8000:8000"
     volumes:
       - ./app:/app/app
+      - ./knowledge-base:/app/knowledge-base
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - OLLAMA_MODEL=llama3.2:3b
+      - KNOWLEDGE_BASE_PATH=/app/knowledge-base
     depends_on:
-        - ollama
+      ollama:
+        condition: service_healthy
 
 volumes:
   ollama_data:
-  
-
-

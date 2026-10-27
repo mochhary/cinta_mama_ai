@@ -26,6 +26,7 @@ TEMPLATE_PATH = BASE_DIR / "templates" / "index.html"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
 
+KNOWLEDGE_BASE_PATH = os.environ.get("KNOWLEDGE_BASE_PATH", "/app/knowledge-base")
 
 class GenerateRequest(BaseModel):
     prompt: str
