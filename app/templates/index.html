@@ -16,82 +16,86 @@
 
     <style>
         :root {
-            /* WhatsApp Desktop macOS Palette - Dark Mode (Default) */
-            --wa-green: #25d366;
-            --wa-teal: #00a884;
-            --wa-teal-hover: #02735e;
-            --wa-teal-dark: #075e54;
+            /* WhatsApp Desktop macOS Latest (Dark Mode) - Exact Screenshot Match */
+            --wa-green: #22c063;
+            --wa-green-hover: #1fa855;
+            --wa-teal: #17b675;
+            --wa-teal-hover: #149a63;
+            --wa-teal-dark: #103529;
             
-            --bg-app: #111b21;
-            --bg-chat-canvas: #0b141a;
-            --bg-sidebar: #111b21;
-            --bg-sidebar-hover: #202c33;
-            --bg-sidebar-active: #2a3942;
+            --bg-app: #1e1e1e;
+            --bg-sidebar: #1e1e1e;
+            --bg-sidebar-hover: #28282c;
+            --bg-sidebar-active: #2f3036;
+            --bg-chat-canvas: #0b0b0e;
             
-            --header-bg: #202c33;
-            --input-bg: #202c33;
-            --input-box-bg: #2a3942;
+            --header-bg: #1e1e20;
+            --input-bg: #18181b;
+            --input-box-bg: #262629;
+            --input-box-border: #333338;
             
-            --bubble-user: #005c4b;
-            --bubble-ai: #202c33;
-            --bubble-user-text: #e9edef;
+            --bubble-user: #103529;
+            --bubble-ai: #1e1e22;
+            --bubble-user-text: #ffffff;
             --bubble-ai-text: #e9edef;
 
-            --border-subtle: #222e35;
-            --border-hover: #374248;
+            --border-subtle: #2d2f34;
+            --border-hover: #3e4148;
 
-            --text-primary: #e9edef;
-            --text-secondary: #8696a0;
-            --text-muted: #667781;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --text-muted: #636366;
 
-            --card-bg: #111b21;
-            --card-border: #222e35;
-            --code-bg: #0c1317;
+            --card-bg: #1e1e22;
+            --card-border: #2d2f34;
+            --code-bg: #141416;
 
-            --dropdown-bg: #202c33;
-            --dropdown-hover: #2a3942;
+            --dropdown-bg: #262629;
+            --dropdown-hover: #303036;
 
-            --shadow-pop: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-pop: 0 4px 18px rgba(0, 0, 0, 0.45);
             --sidebar-width: 280px;
         }
 
         [data-theme="light"] {
-            /* WhatsApp Desktop macOS Palette - Light Mode */
-            --wa-green: #25d366;
-            --wa-teal: #008069;
-            --wa-teal-hover: #016654;
-            --wa-teal-dark: #075e54;
+            /* WhatsApp Desktop macOS Latest (Light Mode) - Exact Screenshot Match */
+            --wa-green: #1daa60;
+            --wa-green-hover: #179352;
+            --wa-teal: #16b474;
+            --wa-teal-hover: #129a62;
+            --wa-teal-dark: #008069;
 
-            --bg-app: #f0f2f5;
-            --bg-chat-canvas: #efeae2;
+            --bg-app: #ffffff;
             --bg-sidebar: #ffffff;
-            --bg-sidebar-hover: #f5f6f6;
-            --bg-sidebar-active: #e9edef;
+            --bg-sidebar-hover: #f5f5f7;
+            --bg-sidebar-active: #e8e8ed;
+            --bg-chat-canvas: #efeae2;
 
-            --header-bg: #f0f2f5;
+            --header-bg: #ffffff;
             --input-bg: #f0f2f5;
             --input-box-bg: #ffffff;
+            --input-box-border: #ede6dc;
 
             --bubble-user: #d9fdd3;
             --bubble-ai: #ffffff;
             --bubble-user-text: #111b21;
             --bubble-ai-text: #111b21;
 
-            --border-subtle: #d1d7db;
-            --border-hover: #bec5c9;
+            --border-subtle: #ede6dc;
+            --border-hover: #d5cfc5;
 
             --text-primary: #111b21;
-            --text-secondary: #54656f;
+            --text-secondary: #667781;
             --text-muted: #8696a0;
 
             --card-bg: #ffffff;
-            --card-border: #e9edef;
+            --card-border: #ede6dc;
             --code-bg: #f8fafc;
 
             --dropdown-bg: #ffffff;
-            --dropdown-hover: #f5f6f6;
+            --dropdown-hover: #f5f5f7;
 
-            --shadow-pop: 0 4px 16px rgba(11, 20, 26, 0.12);
+            --shadow-pop: 0 4px 16px rgba(17, 27, 33, 0.1);
         }
 
         * {
@@ -308,12 +312,11 @@
             text-decoration: none;
         }
 
-        /* Custom "CM AI" Minimalist 2-Line Logo */
+        /* Custom "CM AI" Flat Monogram Logo */
         .cm-logo-svg {
             display: block;
-            border-radius: 8px;
+            border-radius: 9px;
             flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .brand-title {
@@ -694,7 +697,7 @@
             border-color: var(--border-subtle);
         }
 
-        .model-select-btn svg.sparkle-icon {
+        .model-select-btn svg.model-glyph-icon {
             color: var(--wa-green);
         }
 
@@ -750,7 +753,7 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background-color: var(--wa-teal);
+            background-color: var(--wa-green);
             color: #ffffff;
             border: none;
             display: flex;
@@ -762,7 +765,7 @@
         }
 
         .btn-send:hover:not(:disabled) {
-            background-color: var(--wa-teal-hover);
+            background-color: var(--wa-green-hover);
             transform: scale(1.05);
         }
 
@@ -1211,19 +1214,13 @@
                     </svg>
                 </button>
 
-                <!-- Custom "CM AI" Minimalist Logo -->
+                <!-- Custom "CM AI" Flat Monogram Logo (No Gradient) -->
                 <div class="brand-container">
                     <svg class="cm-logo-svg" width="34" height="34" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="44" height="44" rx="10" fill="url(#cm-grad-hdr)"/>
-                        <text x="22" y="19" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="1">CM</text>
-                        <line x1="12" y1="23.5" x2="32" y2="23.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
-                        <text x="22" y="35.5" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="700" font-size="11" fill="#25D366" letter-spacing="1.5">AI</text>
-                        <defs>
-                            <linearGradient id="cm-grad-hdr" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#075E54"/>
-                                <stop offset="1" stop-color="#128C7E"/>
-                            </linearGradient>
-                        </defs>
+                        <rect width="44" height="44" rx="10" fill="#103529"/>
+                        <path d="M15 14C11.5 17 9.5 21 9.5 25.5C9.5 32.5 15 36 22 36C26.5 36 30.5 33.5 33 29.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+                        <path d="M18 27V17L23 23.5L28 17V27" stroke="#22C063" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="34" cy="13" r="3.2" fill="#22C063"/>
                     </svg>
                     <span class="brand-title">CintaMama AI</span>
                 </div>
@@ -1256,22 +1253,16 @@
                 <!-- Welcome Screen (Gemini Style) -->
                 <div class="hero-welcome" id="heroWelcome">
                     <div class="hero-logo-large">
-                        <svg class="cm-logo-svg" width="64" height="64" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="44" height="44" rx="12" fill="url(#cm-grad-hero)"/>
-                            <text x="22" y="19" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="1">CM</text>
-                            <line x1="12" y1="23.5" x2="32" y2="23.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
-                            <text x="22" y="35.5" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="700" font-size="11" fill="#25D366" letter-spacing="1.5">AI</text>
-                            <defs>
-                                <linearGradient id="cm-grad-hero" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#075E54"/>
-                                    <stop offset="1" stop-color="#128C7E"/>
-                                </linearGradient>
-                            </defs>
+                        <svg class="cm-logo-svg" width="68" height="68" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="44" height="44" rx="12" fill="#103529"/>
+                            <path d="M15 14C11.5 17 9.5 21 9.5 25.5C9.5 32.5 15 36 22 36C26.5 36 30.5 33.5 33 29.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+                            <path d="M18 27V17L23 23.5L28 17V27" stroke="#22C063" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="34" cy="13" r="3.2" fill="#22C063"/>
                         </svg>
                     </div>
 
                     <h1 class="hero-title">Hi, Cinta Mama AI disini</h1>
-                    <p class="hero-subtitle">Asisten dokumentasi pemograman anda</p>
+                    <p class="hero-subtitle">Asisten dokumentasi bahasa pemograman anda</p>
 
                     <div class="suggestion-grid">
                         <div class="suggestion-card" data-prompt="Bagaimana cara setup compiler C (C17/C23) dan Makefile di macOS dan Linux?">
@@ -1356,8 +1347,10 @@
                 <div class="input-footer-row">
                     <div class="model-dropdown-container">
                         <button class="model-select-btn" id="btnModelDropdown" type="button" title="Pilih Model">
-                            <svg class="sparkle-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+                            <svg class="model-glyph-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M8 7L3 12L8 17"></path>
+                                <path d="M16 7L21 12L16 17"></path>
+                                <circle cx="12" cy="12" r="2.5" fill="currentColor"></circle>
                             </svg>
                             <span id="activeModelLabel">Llama 3.2 3B</span>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1931,16 +1924,10 @@
             row.innerHTML = `
                 <div class="avatar-wrap ai-avatar">
                     <svg class="cm-logo-svg" width="30" height="30" viewBox="0 0 44 44" fill="none">
-                        <rect width="44" height="44" rx="9" fill="url(#cm-ai-msg)"/>
-                        <text x="22" y="19" text-anchor="middle" font-family="'Google Sans', sans-serif" font-weight="800" font-size="14" fill="#FFFFFF">CM</text>
-                        <line x1="12" y1="23.5" x2="32" y2="23.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-                        <text x="22" y="35.5" text-anchor="middle" font-family="'Google Sans', sans-serif" font-weight="700" font-size="11" fill="#25D366">AI</text>
-                        <defs>
-                            <linearGradient id="cm-ai-msg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#075E54"/>
-                                <stop offset="1" stop-color="#128C7E"/>
-                            </linearGradient>
-                        </defs>
+                        <rect width="44" height="44" rx="8" fill="#103529"/>
+                        <path d="M15 14C11.5 17 9.5 21 9.5 25.5C9.5 32.5 15 36 22 36C26.5 36 30.5 33.5 33 29.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+                        <path d="M18 27V17L23 23.5L28 17V27" stroke="#22C063" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="34" cy="13" r="3.2" fill="#22C063"/>
                     </svg>
                 </div>
                 <div class="bubble bubble-ai">
