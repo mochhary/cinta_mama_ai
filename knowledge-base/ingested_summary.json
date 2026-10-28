@@ -2,12 +2,12 @@
   "status": "success",
   "ingestion_mode": "chunking_only_no_embedding",
   "storage_folder": "/Users/hary/Documents/Semester 7/Proyek Data Science - Pak Ilham Anugerah/Materi 3/ollama-docker/knowledge-base",
-  "total_files": 30,
-  "total_chunks": 2167,
+  "total_files": 31,
+  "total_chunks": 3509,
   "sop_chunks": 129,
-  "doc_chunks": 2038,
-  "total_characters": 3189660,
-  "duration_seconds": 4.69,
+  "doc_chunks": 3380,
+  "total_characters": 7684868,
+  "duration_seconds": 7.28,
   "languages": {
     "C": {
       "sop": 9,
@@ -47,9 +47,9 @@
     },
     "JavaScript": {
       "sop": 9,
-      "docs": 83,
-      "total": 92,
-      "chars": 157554
+      "docs": 1425,
+      "total": 1434,
+      "chars": 4652762
     },
     "Kotlin": {
       "sop": 8,
