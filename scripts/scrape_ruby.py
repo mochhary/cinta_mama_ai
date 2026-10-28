@@ -154,7 +154,7 @@ def parse_ruby_sections(raw_content: str, target: Dict[str, str]) -> List[Dict[s
 
 def main():
     print("=" * 75)
-    print("💎 SCRAPING DOKUMENTASI RESMI RUBY (RUBY 3.2 / 3.3 MODERN SYNTAX & YJIT)")
+    print(" SCRAPING DOKUMENTASI RESMI RUBY (RUBY 3.2 / 3.3 MODERN SYNTAX & YJIT)")
     print("=" * 75)
 
     output_dir = Path("data")
@@ -174,7 +174,7 @@ def main():
         sections = parse_ruby_sections(raw_content, target)
         all_records.extend(sections)
         code_count = sum(1 for s in sections if s["code_snippet"])
-        print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh kode Ruby)")
+        print(f"        {target['category']}: {len(sections)} section ({code_count} ada contoh kode Ruby)")
 
     formatted_records = []
     for idx, rec in enumerate(all_records, 1):
@@ -189,7 +189,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print(f"\n📄 Mengekspor {len(formatted_records)} chunk Ruby ke PDF...")
+    print(f"\n Mengekspor {len(formatted_records)} chunk Ruby ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -213,12 +213,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET RUBY BERHASIL DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk Ruby")
+    print(f"\n DATASET RUBY BERHASIL DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk Ruby")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki contoh kode Ruby")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki contoh kode Ruby")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

@@ -162,7 +162,7 @@ def main():
         sections = parse_kotlin_sections(raw_md, target)
         all_records.extend(sections)
         code_count = sum(1 for s in sections if s["code_snippet"])
-        print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh kode Kotlin)")
+        print(f"        {target['category']}: {len(sections)} section ({code_count} ada contoh kode Kotlin)")
 
     formatted_records = []
     for idx, rec in enumerate(all_records, 1):
@@ -177,7 +177,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print(f"\n📄 Mengekspor {len(formatted_records)} chunk Kotlin ke PDF...")
+    print(f"\n Mengekspor {len(formatted_records)} chunk Kotlin ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -201,12 +201,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET KOTLIN BERHASIL DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk Kotlin")
+    print(f"\n DATASET KOTLIN BERHASIL DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk Kotlin")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki contoh kode Kotlin")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki contoh kode Kotlin")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

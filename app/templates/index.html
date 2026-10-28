@@ -1258,7 +1258,7 @@
                 resStatusBadge.textContent = 'ERROR';
                 resProtocolStatus.textContent = 'HTTP/1.1 Connection Failed';
                 appendStreamLine(chunkIndex + 1, `{"error": "${err.message}"}`, false, true);
-                bodyEl.innerHTML = `<span style="color:#f28b82;">⚠️ Terjadi kesalahan: ${escapeHtml(err.message)}</span>`;
+                bodyEl.innerHTML = `<span style="color:#f28b82;">[ERROR] Terjadi kesalahan: ${escapeHtml(err.message)}</span>`;
             } finally {
                 promptInput.disabled = false;
                 sendBtn.disabled = false;

@@ -187,7 +187,7 @@ def get_c23_modern_features_records() -> List[Dict[str, Any]]:
 
 def main():
     print("=" * 75)
-    print("⚡ SCRAPING DOKUMENTASI RESMI BAHASA C (C11, C17 & C23 MODERN STANDARDS)")
+    print(" SCRAPING DOKUMENTASI RESMI BAHASA C (C11, C17 & C23 MODERN STANDARDS)")
     print("=" * 75)
 
     output_dir = Path("data")
@@ -207,12 +207,12 @@ def main():
         sections = parse_c_sections(raw_md, target)
         all_records.extend(sections)
         code_count = sum(1 for s in sections if s["code_snippet"])
-        print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh kode C)")
+        print(f"        {target['category']}: {len(sections)} section ({code_count} ada contoh kode C)")
 
     # Tambahkan section fitur modern C23
     c23_records = get_c23_modern_features_records()
     all_records.extend(c23_records)
-    print(f"       ✓ Modern Features - C23: Ditambahkan ringkasan standar C23 (nullptr, auto, constexpr)")
+    print(f"        Modern Features - C23: Ditambahkan ringkasan standar C23 (nullptr, auto, constexpr)")
 
     formatted_records = []
     for idx, rec in enumerate(all_records, 1):
@@ -227,7 +227,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print(f"\n📄 Mengekspor {len(formatted_records)} chunk Bahasa C ke PDF...")
+    print(f"\n Mengekspor {len(formatted_records)} chunk Bahasa C ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -251,12 +251,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET BAHASA C BERHASIL DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk Bahasa C")
+    print(f"\n DATASET BAHASA C BERHASIL DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk Bahasa C")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki contoh kode C")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki contoh kode C")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

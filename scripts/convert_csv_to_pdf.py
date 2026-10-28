@@ -18,7 +18,7 @@ def main():
     data_dir = base_dir / "data"
 
     print("=" * 65)
-    print("📄 KONVERSI DATASET CSV KE PDF UNTUK RAG KNOWLEDGE BASE")
+    print(" KONVERSI DATASET CSV KE PDF UNTUK RAG KNOWLEDGE BASE")
     print("=" * 65)
 
     files_to_convert = [
@@ -34,14 +34,14 @@ def main():
             print(f"[!] Lewati: {csv_path.name} tidak ditemukan")
             continue
 
-        print(f"\n🔄 Mengonversi {csv_path.name} -> {pdf_path.name} ({lang})...")
+        print(f"\n Mengonversi {csv_path.name} -> {pdf_path.name} ({lang})...")
         count, out_file = convert_csv_to_pdf(csv_path, pdf_path, default_language=lang)
         size_kb = out_file.stat().st_size / 1024
-        print(f"   ✓ Selesai: {count} dokumen/chunk berhasil diekspor!")
-        print(f"   📁 Output : {out_file}")
-        print(f"   📦 Ukuran : {size_kb:.2f} KB")
+        print(f"    Selesai: {count} dokumen/chunk berhasil diekspor!")
+        print(f"    Output : {out_file}")
+        print(f"    Ukuran : {size_kb:.2f} KB")
 
-    print("\n🎉 Semua dataset CSV berhasil dikonversi ke PDF!")
+    print("\n Semua dataset CSV berhasil dikonversi ke PDF!")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,98 @@
+{
+  "status": "success",
+  "model": "nomic-embed-text",
+  "base_url": "http://localhost:11434",
+  "embedding_dimension": 768,
+  "total_chunks_embedded": 2167,
+  "total_duration_seconds": 2283.43,
+  "average_speed_chunks_per_sec": 0.95,
+  "output_file": "/Users/hary/Documents/Semester 7/Proyek Data Science - Pak Ilham Anugerah/Materi 3/ollama-docker/knowledge-base/embedded_chunks.json",
+  "total_tokens": 1162346,
+  "average_tokens_per_chunk": 536.4,
+  "min_tokens_per_chunk": 73,
+  "max_tokens_per_chunk": 4997,
+  "token_budget_config": {
+    "total_window": 4096,
+    "system_prompt": 250,
+    "user_query_and_history": 500,
+    "knowledge_context": 2346,
+    "reserved_generation": 1000
+  },
+  "language_token_distribution": {
+    "C": {
+      "chunks": 54,
+      "total_tokens": 20297,
+      "avg_tokens": 375.9
+    },
+    "C#": {
+      "chunks": 182,
+      "total_tokens": 101411,
+      "avg_tokens": 557.2
+    },
+    "C++": {
+      "chunks": 83,
+      "total_tokens": 36404,
+      "avg_tokens": 438.6
+    },
+    "Dart": {
+      "chunks": 116,
+      "total_tokens": 59534,
+      "avg_tokens": 513.2
+    },
+    "Go": {
+      "chunks": 123,
+      "total_tokens": 58879,
+      "avg_tokens": 478.7
+    },
+    "Java": {
+      "chunks": 237,
+      "total_tokens": 157964,
+      "avg_tokens": 666.5
+    },
+    "JavaScript": {
+      "chunks": 92,
+      "total_tokens": 58614,
+      "avg_tokens": 637.1
+    },
+    "Kotlin": {
+      "chunks": 158,
+      "total_tokens": 79494,
+      "avg_tokens": 503.1
+    },
+    "PHP": {
+      "chunks": 103,
+      "total_tokens": 30187,
+      "avg_tokens": 293.1
+    },
+    "Python": {
+      "chunks": 270,
+      "total_tokens": 123532,
+      "avg_tokens": 457.5
+    },
+    "Ruby": {
+      "chunks": 132,
+      "total_tokens": 58252,
+      "avg_tokens": 441.3
+    },
+    "Rust": {
+      "chunks": 80,
+      "total_tokens": 53203,
+      "avg_tokens": 665.0
+    },
+    "SQL": {
+      "chunks": 151,
+      "total_tokens": 96439,
+      "avg_tokens": 638.7
+    },
+    "Swift": {
+      "chunks": 160,
+      "total_tokens": 120839,
+      "avg_tokens": 755.2
+    },
+    "TypeScript": {
+      "chunks": 226,
+      "total_tokens": 107297,
+      "avg_tokens": 474.8
+    }
+  }
+}

@@ -157,7 +157,7 @@ def parse_docbook_sections(raw_xml: str, target: Dict[str, str]) -> List[Dict[st
 
 def main():
     print("=" * 75)
-    print("🐘 SCRAPING DOKUMENTASI RESMI PHP (PHP 8.2 / 8.3 / 8.4 MODERN OOP & SYNTAX)")
+    print(" SCRAPING DOKUMENTASI RESMI PHP (PHP 8.2 / 8.3 / 8.4 MODERN OOP & SYNTAX)")
     print("=" * 75)
 
     output_dir = Path("data")
@@ -177,7 +177,7 @@ def main():
         sections = parse_docbook_sections(raw_xml, target)
         all_records.extend(sections)
         code_count = sum(1 for s in sections if s["code_snippet"])
-        print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh kode PHP)")
+        print(f"        {target['category']}: {len(sections)} section ({code_count} ada contoh kode PHP)")
 
     formatted_records = []
     for idx, rec in enumerate(all_records, 1):
@@ -192,7 +192,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print(f"\n📄 Mengekspor {len(formatted_records)} chunk PHP ke PDF...")
+    print(f"\n Mengekspor {len(formatted_records)} chunk PHP ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -216,12 +216,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET PHP BERHASIL DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk PHP")
+    print(f"\n DATASET PHP BERHASIL DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk PHP")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki contoh kode PHP")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki contoh kode PHP")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

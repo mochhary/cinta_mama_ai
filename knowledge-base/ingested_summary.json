@@ -1,0 +1,103 @@
+{
+  "status": "success",
+  "ingestion_mode": "chunking_only_no_embedding",
+  "storage_folder": "/Users/hary/Documents/Semester 7/Proyek Data Science - Pak Ilham Anugerah/Materi 3/ollama-docker/knowledge-base",
+  "total_files": 30,
+  "total_chunks": 2167,
+  "sop_chunks": 129,
+  "doc_chunks": 2038,
+  "total_characters": 3189660,
+  "duration_seconds": 4.69,
+  "languages": {
+    "C": {
+      "sop": 9,
+      "docs": 45,
+      "total": 54,
+      "chars": 51298
+    },
+    "C++": {
+      "sop": 9,
+      "docs": 74,
+      "total": 83,
+      "chars": 97853
+    },
+    "C#": {
+      "sop": 8,
+      "docs": 174,
+      "total": 182,
+      "chars": 282526
+    },
+    "Dart": {
+      "sop": 8,
+      "docs": 108,
+      "total": 116,
+      "chars": 154234
+    },
+    "Go": {
+      "sop": 9,
+      "docs": 114,
+      "total": 123,
+      "chars": 165690
+    },
+    "Java": {
+      "sop": 8,
+      "docs": 229,
+      "total": 237,
+      "chars": 439595
+    },
+    "JavaScript": {
+      "sop": 9,
+      "docs": 83,
+      "total": 92,
+      "chars": 157554
+    },
+    "Kotlin": {
+      "sop": 8,
+      "docs": 150,
+      "total": 158,
+      "chars": 218195
+    },
+    "PHP": {
+      "sop": 8,
+      "docs": 95,
+      "total": 103,
+      "chars": 83956
+    },
+    "Python": {
+      "sop": 12,
+      "docs": 258,
+      "total": 270,
+      "chars": 330159
+    },
+    "Ruby": {
+      "sop": 8,
+      "docs": 124,
+      "total": 132,
+      "chars": 152418
+    },
+    "Rust": {
+      "sop": 8,
+      "docs": 72,
+      "total": 80,
+      "chars": 148857
+    },
+    "SQL": {
+      "sop": 7,
+      "docs": 144,
+      "total": 151,
+      "chars": 277675
+    },
+    "Swift": {
+      "sop": 8,
+      "docs": 152,
+      "total": 160,
+      "chars": 328704
+    },
+    "TypeScript": {
+      "sop": 10,
+      "docs": 216,
+      "total": 226,
+      "chars": 300946
+    }
+  }
+}

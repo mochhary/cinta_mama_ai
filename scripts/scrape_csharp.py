@@ -291,7 +291,7 @@ def parse_doc_sections(raw_md: str, category: str, doc_rel_path: str, learn_url:
 
 def main():
     print("=" * 70)
-    print("🚀 SCRAPING DOKUMENTASI RESMI C# (SINTAKS, INSTALASI & KONFIGURASI)")
+    print(" SCRAPING DOKUMENTASI RESMI C# (SINTAKS, INSTALASI & KONFIGURASI)")
     print("=" * 70)
 
     output_dir = Path("data")
@@ -313,7 +313,7 @@ def main():
         sections = parse_doc_sections(raw_md, target["category"], target["path"], learn_url)
         all_records.extend(sections)
         code_count = sum(1 for s in sections if s["code_snippet"])
-        print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh kode/CLI)")
+        print(f"        {target['category']}: {len(sections)} section ({code_count} ada contoh kode/CLI)")
 
     formatted_records = []
     for idx, rec in enumerate(all_records, 1):
@@ -328,7 +328,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print("\n📄 Menyimpan dataset lengkap ke PDF...")
+    print("\n Menyimpan dataset lengkap ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -352,12 +352,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET C# LENGKAP SELESAI DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk/section C#")
+    print(f"\n DATASET C# LENGKAP SELESAI DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk/section C#")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki snippet kode C# / perintah CLI")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki snippet kode C# / perintah CLI")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

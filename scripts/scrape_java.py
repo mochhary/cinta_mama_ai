@@ -415,7 +415,7 @@ def parse_jep_html_doc(raw_html: str, source_url: str, category: str) -> List[Di
 # ========================================================
 def main():
     print("=" * 75)
-    print("☕ SCRAPING DOKUMENTASI RESMI JAVA (SINTAKS, INSTALASI, TOOLING & JEPs)")
+    print(" SCRAPING DOKUMENTASI RESMI JAVA (SINTAKS, INSTALASI, TOOLING & JEPs)")
     print("=" * 75)
 
     output_dir = Path("data")
@@ -449,7 +449,7 @@ def main():
 
         all_records.extend(parsed)
         code_count = sum(1 for p in parsed if p["code_snippet"])
-        print(f"       ✓ {len(parsed)} section/chunk ({code_count} ada kode/CLI)")
+        print(f"        {len(parsed)} section/chunk ({code_count} ada kode/CLI)")
 
     formatted_records = []
     for i, rec in enumerate(all_records, 1):
@@ -464,7 +464,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print("\n📄 Menyimpan dataset lengkap Java ke PDF...")
+    print("\n Menyimpan dataset lengkap Java ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -488,12 +488,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET JAVA LENGKAP SELESAI DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk/section Java")
+    print(f"\n DATASET JAVA LENGKAP SELESAI DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk/section Java")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki contoh kode Java / perintah CLI")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki contoh kode Java / perintah CLI")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":

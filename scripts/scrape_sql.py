@@ -123,7 +123,7 @@ def parse_pg_sections(raw_sgml: str, target: Dict[str, str]) -> List[Dict[str, A
 
 def main():
     print("=" * 75)
-    print("🐘 SCRAPING DOKUMENTASI RESMI SQL (POSTGRESQL 16 / 17 MODERN SQL & JSON)")
+    print(" SCRAPING DOKUMENTASI RESMI SQL (POSTGRESQL 16 / 17 MODERN SQL & JSON)")
     print("=" * 75)
 
     output_dir = Path("data")
@@ -143,7 +143,7 @@ def main():
         sections = parse_pg_sections(raw_sgml, target)
         all_records.extend(sections)
         code_count = sum(1 for s in sections if s["code_snippet"])
-        print(f"       ✓ {target['category']}: {len(sections)} section ({code_count} ada contoh query SQL)")
+        print(f"        {target['category']}: {len(sections)} section ({code_count} ada contoh query SQL)")
 
     formatted_records = []
     for idx, rec in enumerate(all_records, 1):
@@ -158,7 +158,7 @@ def main():
             "code_snippet": rec["code_snippet"],
         })
 
-    print(f"\n📄 Mengekspor {len(formatted_records)} chunk SQL ke PDF...")
+    print(f"\n Mengekspor {len(formatted_records)} chunk SQL ke PDF...")
     export_records_to_pdf(
         formatted_records,
         pdf_file,
@@ -182,12 +182,12 @@ def main():
         writer.writeheader()
         writer.writerows(formatted_records)
 
-    print(f"\n🎉 DATASET SQL BERHASIL DIBUAT DALAM FORMAT PDF!")
-    print(f"📁 Lokasi File PDF : {pdf_file.resolve()}")
-    print(f"📊 Total Dokumen   : {len(all_records)} chunk SQL")
+    print(f"\n DATASET SQL BERHASIL DIBUAT DALAM FORMAT PDF!")
+    print(f" Lokasi File PDF : {pdf_file.resolve()}")
+    print(f" Total Dokumen   : {len(all_records)} chunk SQL")
     code_total = sum(1 for r in all_records if r["code_snippet"])
-    print(f"💻 Total Kode      : {code_total} section memiliki contoh query SQL")
-    print(f"📦 Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
+    print(f" Total Kode      : {code_total} section memiliki contoh query SQL")
+    print(f" Ukuran File PDF : {os.path.getsize(pdf_file) / 1024:.2f} KB")
 
 
 if __name__ == "__main__":
