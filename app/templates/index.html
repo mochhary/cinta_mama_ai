@@ -1701,27 +1701,78 @@
             sidebarOverlay.classList.remove('active');
         });
 
+        let currentAbortController = null;
+        let activeBodyEl = null;
+
+        const sendIconSvg = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+        `;
+
+        const stopIconSvg = `
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="5" y="5" width="14" height="14" rx="2.5"></rect>
+            </svg>
+        `;
+
+        function stopGeneration() {
+            if (currentAbortController) {
+                currentAbortController.abort();
+                currentAbortController = null;
+            }
+            if (activeBodyEl) {
+                const parent = activeBodyEl.parentElement;
+                if (parent) {
+                    const cursor = parent.querySelector('.cursor-blink');
+                    if (cursor) cursor.remove();
+                }
+                activeBodyEl = null;
+            }
+            isGenerating = false;
+            btnSend.innerHTML = sendIconSvg;
+            btnSend.title = "Kirim Pesan";
+            btnSend.disabled = !promptInput.value.trim();
+            promptInput.disabled = false;
+            promptInput.focus();
+
+            resStatusBadge.className = 'badge-status status-idle';
+            resStatusBadge.textContent = 'STOPPED';
+        }
+
         // Input textarea auto-resize & submit on enter
         promptInput.addEventListener('input', () => {
             promptInput.style.height = 'auto';
             promptInput.style.height = Math.min(promptInput.scrollHeight, 160) + 'px';
-            btnSend.disabled = !promptInput.value.trim() || isGenerating;
+            if (!isGenerating) {
+                btnSend.disabled = !promptInput.value.trim();
+            }
         });
 
         promptInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                if (!btnSend.disabled) {
+                if (!isGenerating && promptInput.value.trim()) {
                     handleSendMessage();
                 }
             }
         });
 
-        btnSend.addEventListener('click', handleSendMessage);
+        btnSend.addEventListener('click', () => {
+            if (isGenerating) {
+                stopGeneration();
+            } else {
+                handleSendMessage();
+            }
+        });
 
         // Suggestion Cards click
         document.querySelectorAll('.suggestion-card').forEach(card => {
             card.addEventListener('click', () => {
+                if (isGenerating) {
+                    stopGeneration();
+                }
                 const prompt = card.getAttribute('data-prompt');
                 if (prompt) {
                     promptInput.value = prompt;
@@ -1733,13 +1784,17 @@
 
         // New Chat
         btnNewChat.addEventListener('click', () => {
+            stopGeneration();
             currentSessionId = null;
             messagesList.innerHTML = '';
             heroWelcome.style.display = 'flex';
             promptInput.value = '';
             promptInput.style.height = 'auto';
+            promptInput.disabled = false;
+            btnSend.innerHTML = sendIconSvg;
             btnSend.disabled = true;
             renderHistoryList();
+            promptInput.focus();
             if (window.innerWidth <= 768) {
                 sidebar.classList.remove('mobile-open');
                 sidebarOverlay.classList.remove('active');
@@ -1752,7 +1807,9 @@
             if (!text || isGenerating) return;
 
             isGenerating = true;
-            btnSend.disabled = true;
+            btnSend.innerHTML = stopIconSvg;
+            btnSend.title = "Hentikan Jawaban (Stop)";
+            btnSend.disabled = false;
             promptInput.value = '';
             promptInput.style.height = 'auto';
 
@@ -1803,14 +1860,17 @@
 
             // Append Streaming AI Bubble
             const { bubbleEl, bodyEl } = appendAiMessage();
+            activeBodyEl = bodyEl;
 
+            currentAbortController = new AbortController();
             let fullResponseText = '';
 
             try {
                 const response = await fetch('/generate/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: text })
+                    body: JSON.stringify({ prompt: text }),
+                    signal: currentAbortController.signal
                 });
 
                 const ttfb = (performance.now() - startTime).toFixed(1);
@@ -1883,14 +1943,37 @@
                 saveMessageToCurrentSession('assistant', fullResponseText);
 
             } catch (err) {
-                resStatusBadge.className = 'badge-status status-error';
-                resStatusBadge.textContent = 'ERROR';
-                resProtocolStatus.textContent = 'HTTP/1.1 Connection Failed';
-                appendStreamLine(chunkIndex + 1, JSON.stringify({ error: err.message }), false, true);
-                bodyEl.innerHTML = `<span style="color:#ea4335;">[ERROR] Gagal memproses: ${escapeHtml(err.message)}</span>`;
+                if (err.name === 'AbortError') {
+                    // Aborted cleanly by user
+                    if (fullResponseText) {
+                        finalizeAiMessage(bodyEl, fullResponseText);
+                        saveMessageToCurrentSession('assistant', fullResponseText);
+                    } else {
+                        const parent = bodyEl.parentElement;
+                        if (parent) {
+                            const cursor = parent.querySelector('.cursor-blink');
+                            if (cursor) cursor.remove();
+                        }
+                        bodyEl.innerHTML = `<span style="color:var(--text-muted); font-style:italic;">[Generasi dihentikan]</span>`;
+                    }
+                    resStatusBadge.className = 'badge-status status-idle';
+                    resStatusBadge.textContent = 'ABORTED';
+                    appendStreamLine(chunkIndex + 1, '{"status": "Generasi dihentikan oleh pengguna"}', true, false);
+                } else {
+                    resStatusBadge.className = 'badge-status status-error';
+                    resStatusBadge.textContent = 'ERROR';
+                    resProtocolStatus.textContent = 'HTTP/1.1 Connection Failed';
+                    appendStreamLine(chunkIndex + 1, JSON.stringify({ error: err.message }), false, true);
+                    bodyEl.innerHTML = `<span style="color:#ea4335;">[ERROR] Gagal memproses: ${escapeHtml(err.message)}</span>`;
+                }
             } finally {
+                currentAbortController = null;
+                activeBodyEl = null;
                 isGenerating = false;
+                btnSend.innerHTML = sendIconSvg;
+                btnSend.title = "Kirim Pesan";
                 btnSend.disabled = !promptInput.value.trim();
+                promptInput.disabled = false;
                 promptInput.focus();
                 renderHistoryList();
             }
@@ -2071,6 +2154,7 @@
         }
 
         function loadSession(sessionId) {
+            stopGeneration();
             const session = chatSessions.find(s => s.id === sessionId);
             if (!session) return;
 

@@ -13,3 +13,12 @@ data/
 scripts/
 *.log
 
+# Cloudflare Tunnel & Local Scripts (Private - Not for Docker)
+tunnel.sh
+start-tunnel.sh
+run-tunnel.sh
+*.tunnel.*
+cloudflared*
+.cloudflared/
+tunnel.log
+

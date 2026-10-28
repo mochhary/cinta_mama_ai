@@ -10,3 +10,12 @@ ENV/
 .DS_Store
 .idea/
 .vscode/
+
+# Cloudflare Tunnel & Local Scripts (Private - Not for Git)
+tunnel.sh
+start-tunnel.sh
+run-tunnel.sh
+*.tunnel.*
+cloudflared*
+.cloudflared/
+tunnel.log
