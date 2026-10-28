@@ -1,41 +1,97 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CintaMamaAI</title>
-    <!-- Font Google Sans Only -->
+    <title>CintaMama AI</title>
+    <!-- Google Sans Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Highlight.js for Code Highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <!-- Marked.js for Markdown Rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
+
     <style>
         :root {
-            /* Google Core Colors */
-            --google-blue: #4285F4;
-            --google-red: #EA4335;
-            --google-yellow: #FBBC04;
-            --google-green: #34A853;
-            --blue-accent: #8ab4f8;
+            /* WhatsApp Desktop macOS Palette - Dark Mode (Default) */
+            --wa-green: #25d366;
+            --wa-teal: #00a884;
+            --wa-teal-hover: #02735e;
+            --wa-teal-dark: #075e54;
+            
+            --bg-app: #111b21;
+            --bg-chat-canvas: #0b141a;
+            --bg-sidebar: #111b21;
+            --bg-sidebar-hover: #202c33;
+            --bg-sidebar-active: #2a3942;
+            
+            --header-bg: #202c33;
+            --input-bg: #202c33;
+            --input-box-bg: #2a3942;
+            
+            --bubble-user: #005c4b;
+            --bubble-ai: #202c33;
+            --bubble-user-text: #e9edef;
+            --bubble-ai-text: #e9edef;
 
-            /* 1 Single Clean Google Dark Theme */
-            --bg-base: #131314;
-            --bg-surface: #1e1f20;
-            --bg-card: #25272a;
-            --border-subtle: #333538;
-            --border-hover: #5f6368;
-            --text-primary: #e3e3e3;
-            --text-secondary: #9aa0a6;
-            --text-disabled: #5f6368;
-            --console-bg: #111214;
-            --console-border: #2c2d30;
+            --border-subtle: #222e35;
+            --border-hover: #374248;
+
+            --text-primary: #e9edef;
+            --text-secondary: #8696a0;
+            --text-muted: #667781;
+
+            --card-bg: #111b21;
+            --card-border: #222e35;
+            --code-bg: #0c1317;
+
+            --dropdown-bg: #202c33;
+            --dropdown-hover: #2a3942;
+
+            --shadow-pop: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --sidebar-width: 280px;
+        }
+
+        [data-theme="light"] {
+            /* WhatsApp Desktop macOS Palette - Light Mode */
+            --wa-green: #25d366;
+            --wa-teal: #008069;
+            --wa-teal-hover: #016654;
+            --wa-teal-dark: #075e54;
+
+            --bg-app: #f0f2f5;
+            --bg-chat-canvas: #efeae2;
+            --bg-sidebar: #ffffff;
+            --bg-sidebar-hover: #f5f6f6;
+            --bg-sidebar-active: #e9edef;
+
+            --header-bg: #f0f2f5;
+            --input-bg: #f0f2f5;
+            --input-box-bg: #ffffff;
+
+            --bubble-user: #d9fdd3;
+            --bubble-ai: #ffffff;
+            --bubble-user-text: #111b21;
+            --bubble-ai-text: #111b21;
+
+            --border-subtle: #d1d7db;
+            --border-hover: #bec5c9;
+
+            --text-primary: #111b21;
+            --text-secondary: #54656f;
+            --text-muted: #8696a0;
+
+            --card-bg: #ffffff;
+            --card-border: #e9edef;
+            --code-bg: #f8fafc;
+
+            --dropdown-bg: #ffffff;
+            --dropdown-hover: #f5f6f6;
+
+            --shadow-pop: 0 4px 16px rgba(11, 20, 26, 0.12);
         }
 
         * {
@@ -46,897 +102,1319 @@
         }
 
         body {
-            background-color: var(--bg-base);
+            background-color: var(--bg-app);
             color: var(--text-primary);
-            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* ================= SIDEBAR (GEMINI RIWAYAT) ================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            flex-shrink: 0;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
         }
 
-        /* Subtle Google 4-Color Accent Line */
-        .color-strip {
-            height: 3px;
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+            position: absolute;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .btn-new-chat {
             width: 100%;
             display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background-color: var(--header-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .color-strip .c-blue { flex: 1; background-color: var(--google-blue); }
-        .color-strip .c-red { flex: 1; background-color: var(--google-red); }
-        .color-strip .c-yellow { flex: 1; background-color: var(--google-yellow); }
-        .color-strip .c-green { flex: 1; background-color: var(--google-green); }
+        .btn-new-chat:hover {
+            border-color: var(--wa-teal);
+            background-color: var(--bg-sidebar-hover);
+        }
 
-        /* Clean Header */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 0.75rem 1.5rem;
+        .btn-new-chat svg {
+            color: var(--wa-teal);
+            flex-shrink: 0;
+        }
+
+        .sidebar-history-title {
+            padding: 16px 18px 8px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .sidebar-history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 8px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .history-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            text-decoration: none;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .history-item:hover {
+            background-color: var(--bg-sidebar-hover);
+        }
+
+        .history-item.active {
+            background-color: var(--bg-sidebar-active);
+        }
+
+        .history-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-title-wrap svg {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .history-title-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-delete-history {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            opacity: 0;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.15s, color 0.15s;
+        }
+
+        .history-item:hover .btn-delete-history {
+            opacity: 1;
+        }
+
+        .btn-delete-history:hover {
+            color: #ea4335;
+        }
+
+        .history-empty-state {
+            padding: 24px 14px;
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ================= MAIN WRAPPER ================= */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--bg-chat-canvas);
+        }
+
+        /* ================= TOP HEADER ================= */
+        .top-header {
+            height: 60px;
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            background-color: var(--header-bg);
+            flex-shrink: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-action-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: background-color 0.15s, color 0.15s;
+        }
+
+        .header-action-btn:hover {
+            background-color: var(--bg-sidebar-hover);
+            color: var(--text-primary);
+        }
+
+        .header-action-btn.active {
+            background-color: var(--bg-sidebar-hover);
+            color: var(--wa-teal);
         }
 
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 10px;
             text-decoration: none;
-            user-select: none;
         }
 
-        /* Simple Clean Logo (No AI Slop) */
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Custom "CM AI" Minimalist 2-Line Logo */
+        .cm-logo-svg {
+            display: block;
+            border-radius: 8px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .brand-name {
-            font-size: 1.15rem;
+        .brand-title {
+            font-size: 1.02rem;
             font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
         }
 
-        .header-actions {
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 8px;
         }
 
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-            background: rgba(52, 168, 83, 0.1);
-            border: 1px solid rgba(52, 168, 83, 0.25);
-            padding: 0.35rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.78rem;
-            color: #81c995;
-            font-weight: 500;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--google-green);
-        }
-
-        .btn-icon {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            font-size: 0.88rem;
-        }
-
-        .btn-icon:hover {
-            color: #ffffff;
-            border-color: var(--blue-accent);
-            background: #2e3034;
-        }
-
-        .btn-icon.active {
-            background: rgba(66, 133, 244, 0.15);
-            border-color: var(--blue-accent);
-            color: var(--blue-accent);
-        }
-
-        /* Workspace Grid */
-        .workspace-grid {
+        /* ================= WORKSPACE BODY & SPLIT LAYOUT ================= */
+        .workspace-body {
             flex: 1;
             display: flex;
-            width: 100%;
-            height: calc(100vh - 61px);
+            position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            width: 100%;
+            height: calc(100vh - 60px);
         }
 
-        /* Left Chat Pane */
         .chat-pane {
             flex: 1;
-            height: 100%;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
             position: relative;
-            padding-bottom: 7.5rem;
-            background: var(--bg-base);
+            overflow: hidden;
+            height: 100%;
+            background-color: var(--bg-chat-canvas);
         }
 
-        .chat-container {
-            max-width: 760px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem 1.25rem;
+        /* ================= CHAT SCROLL AREA ================= */
+        .chat-scroll-area {
+            flex: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            padding: 20px 18px 150px;
+            scroll-behavior: smooth;
         }
 
-        /* Simple Clean Welcome Screen */
-        .welcome-hero {
+        .chat-centered-content {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        /* ================= HERO GREETING (GEMINI STYLE) ================= */
+        .hero-welcome {
+            margin: auto 0;
+            padding: 36px 0 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            margin: 3.5rem auto 1.5rem;
-            max-width: 600px;
-            animation: fadeIn 0.35s ease-out;
+        }
+
+        .hero-logo-large {
+            margin-bottom: 18px;
+        }
+
+        .hero-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 520px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        /* Suggestion Cards - 2x2 Layout */
+        .suggestion-grid {
+            width: 100%;
+            max-width: 680px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .suggestion-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .suggestion-card:hover {
+            border-color: var(--wa-teal);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 168, 132, 0.12);
+        }
+
+        .suggestion-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .suggestion-card-header svg {
+            color: var(--wa-teal);
+            flex-shrink: 0;
+        }
+
+        .suggestion-card-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* ================= MESSAGE BUBBLE ================= */
+        .message-row {
+            display: flex;
+            width: 100%;
+            gap: 10px;
+            animation: fadeIn 0.2s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .welcome-hero h2 {
-            font-size: 1.65rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.4rem;
-            letter-spacing: -0.01em;
+        .message-row.user-row {
+            justify-content: flex-end;
         }
 
-        .welcome-hero p {
-            font-size: 0.92rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.75rem;
+        .message-row.ai-row {
+            justify-content: flex-start;
         }
 
-        /* 4 Recommendation Chips (Java, Python, C#, JavaScript) - 2x2 Grid */
-        .prompt-chips {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.85rem;
-            width: 100%;
-        }
-
-        @media (max-width: 600px) {
-            .prompt-chips {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chip {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 0.95rem 1.15rem;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.85rem;
-        }
-
-        .chip:hover {
-            border-color: var(--blue-accent);
-            background: var(--bg-card);
-            transform: translateY(-2px);
-        }
-
-        .chip-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.04);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.2rem;
-        }
-
-        .chip-icon.java-icon {
-            color: var(--google-red);
-        }
-
-        .chip-icon.python-icon {
-            color: var(--google-blue);
-        }
-
-        .chip-icon.csharp-icon {
-            color: #a179dc;
-        }
-
-        .chip-icon.csharp-icon .csharp-badge {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .chip-icon.js-icon {
-            color: var(--google-yellow);
-        }
-
-        .chip-text {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        /* Chat Bubbles */
-        .message-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .message {
-            display: flex;
-            gap: 0.85rem;
-            animation: slideUp 0.25s ease-out forwards;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message-avatar {
+        .avatar-wrap {
             width: 32px;
             height: 32px;
-            border-radius: 8px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 0.85rem;
+            margin-top: 2px;
         }
 
         .user-avatar {
-            background: #2c384a;
-            color: var(--blue-accent);
-        }
-
-        .ai-avatar {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
+            background-color: var(--wa-teal);
             color: #ffffff;
         }
 
-        .message-content {
-            flex: 1;
-            padding: 0.95rem 1.15rem;
-            border-radius: 14px;
-            line-height: 1.6;
-            font-size: 0.92rem;
+        .ai-avatar {
+            background: none;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.94rem;
+            line-height: 1.55;
             position: relative;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
         }
 
-        .user-message {
-            background: rgba(66, 133, 244, 0.12);
-            border: 1px solid rgba(66, 133, 244, 0.25);
-            border-top-left-radius: 4px;
-            color: var(--text-primary);
+        .bubble-user {
+            background-color: var(--bubble-user);
+            color: var(--bubble-user-text);
+            border-top-right-radius: 2px;
         }
 
-        .ai-message {
-            background: var(--bg-surface);
+        .bubble-ai {
+            background-color: var(--bubble-ai);
+            color: var(--bubble-ai-text);
+            border-top-left-radius: 2px;
             border: 1px solid var(--border-subtle);
-            border-top-left-radius: 4px;
-            color: var(--text-primary);
         }
 
-        .message-header {
+        .message-meta-header {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.35rem;
-            font-size: 0.74rem;
-            color: var(--text-secondary);
-        }
-
-        .message-model {
-            color: var(--blue-accent);
-            font-weight: 600;
+            gap: 12px;
         }
 
         .message-body {
-            line-height: 1.6;
-            word-break: break-word;
+            word-wrap: break-word;
         }
 
-        .user-message .message-body {
-            white-space: pre-wrap;
+        .message-body p {
+            margin-bottom: 8px;
         }
 
-        /* Modern Code Blocks */
-        .ai-message .message-body pre {
-            background: var(--console-bg);
-            border: 1px solid var(--border-subtle);
+        .message-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-body ul, .message-body ol {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .message-body li {
+            margin-bottom: 4px;
+        }
+
+        /* Code block in AI response */
+        .message-body pre {
+            background-color: var(--code-bg);
             border-radius: 8px;
-            margin: 0.75rem 0;
-            overflow: hidden;
-            position: relative;
+            padding: 12px;
+            margin: 10px 0;
+            overflow-x: auto;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .message-body code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+            font-size: 0.86rem;
         }
 
         .code-header-bar {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            background: #18191c;
-            padding: 0.35rem 0.85rem;
+            align-items: center;
+            padding: 6px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid var(--border-subtle);
+            border-radius: 8px 8px 0 0;
+            margin: -12px -12px 10px -12px;
             font-size: 0.72rem;
             color: var(--text-secondary);
+            font-weight: 600;
         }
 
         .btn-copy-code {
-            background: transparent;
+            background: none;
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 0.72rem;
+            font-size: 0.76rem;
             display: flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            transition: all 0.2s;
+            gap: 5px;
+            transition: color 0.15s;
         }
 
         .btn-copy-code:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            color: var(--wa-green);
         }
 
-        .ai-message .message-body pre code {
-            display: block;
-            padding: 0.85rem 1rem;
-            font-size: 0.85rem;
-            line-height: 1.55;
-            color: #e8eaed;
-            overflow-x: auto;
-            white-space: pre;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
-        }
-
-        .ai-message .message-body :not(pre) > code {
-            background: rgba(255, 255, 255, 0.08);
-            color: #f28b82;
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            font-size: 0.84rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
-        }
-
-        .ai-message .message-body p {
-            margin-bottom: 0.65rem;
-        }
-
-        .ai-message .message-body p:last-child {
-            margin-bottom: 0;
-        }
-
-        .ai-message .message-body ul, .ai-message .message-body ol {
-            padding-left: 1.3rem;
-            margin: 0.5rem 0;
-        }
-
-        .ai-message .message-body li {
-            margin-bottom: 0.25rem;
-        }
-
-        .ai-message .message-body h1,
-        .ai-message .message-body h2,
-        .ai-message .message-body h3,
-        .ai-message .message-body h4 {
-            color: #ffffff;
-            margin: 0.9rem 0 0.4rem;
-            font-weight: 700;
-        }
-
-        .ai-message .message-body table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 0.75rem 0;
-            font-size: 0.82rem;
-        }
-
-        .ai-message .message-body th, .ai-message .message-body td {
-            border: 1px solid var(--border-subtle);
-            padding: 0.45rem 0.7rem;
-            text-align: left;
-        }
-
-        .ai-message .message-body th {
-            background: #18191c;
-            color: #ffffff;
-        }
-
+        /* Blinking Cursor for Streaming */
         .cursor-blink {
             display: inline-block;
             width: 7px;
             height: 15px;
-            background: var(--blue-accent);
-            margin-left: 3px;
+            background-color: var(--wa-green);
             vertical-align: middle;
-            animation: blink 0.8s infinite;
+            margin-left: 3px;
+            animation: blinkAnim 0.8s infinite;
         }
 
-        @keyframes blink {
+        @keyframes blinkAnim {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
         }
 
-        /* Clean Input Dock */
-        .input-dock {
-            position: fixed;
+        /* ================= FLOATING INPUT BAR (GEMINI STYLE) ================= */
+        .input-bar-container {
+            position: absolute;
             bottom: 0;
             left: 0;
-            width: 100%;
-            padding: 0.85rem 1.25rem 1.25rem;
-            background: linear-gradient(180deg, transparent 0%, rgba(19, 19, 20, 0.85) 30%, #131314 100%);
-            z-index: 40;
+            right: 0;
+            padding: 12px 18px 18px;
+            background: linear-gradient(to top, var(--bg-chat-canvas) 75%, transparent 100%);
             display: flex;
-            justify-content: center;
-            transition: all 0.3s ease;
+            flex-direction: column;
+            align-items: center;
+            z-index: 40;
         }
 
-        .workspace-grid.split-active .input-dock {
-            width: calc(100% - 600px);
-        }
-
-        @media (max-width: 1100px) {
-            .workspace-grid.split-active .input-dock {
-                width: 100%;
-            }
-        }
-
-        .input-card {
-            max-width: 760px;
+        .input-box-wrapper {
             width: 100%;
-            background: var(--bg-surface);
+            max-width: 800px;
+            background-color: var(--input-box-bg);
             border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            padding: 0.55rem 0.75rem 0.55rem 1.25rem;
+            border-radius: 20px;
+            padding: 10px 14px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: var(--shadow-pop);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-box-wrapper:focus-within {
+            border-color: var(--wa-teal);
+            box-shadow: 0 4px 16px rgba(0, 168, 132, 0.18);
+        }
+
+        .input-main-row {
             display: flex;
             align-items: flex-end;
-            gap: 0.75rem;
-            transition: all 0.2s ease;
+            gap: 10px;
+            width: 100%;
         }
 
-        .input-card:focus-within {
-            border-color: var(--blue-accent);
-            background: #222326;
-            box-shadow: 0 0 0 1px var(--blue-accent);
-        }
-
-        textarea {
+        .input-textarea {
             flex: 1;
-            background: transparent;
+            background: none;
             border: none;
             outline: none;
             color: var(--text-primary);
-            font-size: 0.94rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
             resize: none;
             max-height: 160px;
-            min-height: 26px;
-            line-height: 1.5;
-            padding: 0.4rem 0;
+            padding: 4px 0;
         }
 
-        textarea::placeholder {
+        .input-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Model Dropdown inside Input Box (Gemini Style) */
+        .input-footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 4px;
+            border-top: 1px solid rgba(134, 150, 160, 0.12);
+        }
+
+        .model-dropdown-container {
+            position: relative;
+        }
+
+        .model-select-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: none;
+            border: 1px solid transparent;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
             color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .model-select-btn:hover {
+            background-color: var(--bg-sidebar-hover);
+            color: var(--text-primary);
+            border-color: var(--border-subtle);
+        }
+
+        .model-select-btn svg.sparkle-icon {
+            color: var(--wa-green);
+        }
+
+        .model-dropdown-menu {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            background-color: var(--dropdown-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 6px;
+            min-width: 220px;
+            box-shadow: var(--shadow-pop);
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 80;
+        }
+
+        .model-dropdown-menu.show {
+            display: flex;
+        }
+
+        .model-dropdown-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            transition: background-color 0.15s;
+        }
+
+        .model-dropdown-item:hover, .model-dropdown-item.active {
+            background-color: var(--dropdown-hover);
+        }
+
+        .model-dropdown-item-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .model-dropdown-item-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
         }
 
         .btn-send {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: var(--google-blue);
-            border: none;
+            background-color: var(--wa-teal);
             color: #ffffff;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
             flex-shrink: 0;
-            font-size: 0.85rem;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
         .btn-send:hover:not(:disabled) {
-            background: #5a95f5;
+            background-color: var(--wa-teal-hover);
             transform: scale(1.05);
         }
 
         .btn-send:disabled {
-            background: #2c2d30;
-            color: var(--text-disabled);
+            background-color: var(--border-subtle);
+            color: var(--text-muted);
             cursor: not-allowed;
+            transform: none;
         }
 
-        /* Inspector Split Pane (Collapsible) */
+        .input-disclaimer {
+            margin-top: 6px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ================= BACKEND & STREAM INSPECTOR PANE ================= */
         .inspector-pane {
             width: 0;
             min-width: 0;
             height: 100%;
-            background: var(--console-bg);
+            background-color: var(--header-bg);
             border-left: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 30;
+            transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 35;
         }
 
-        .workspace-grid.split-active .inspector-pane {
-            width: 600px;
-            min-width: 500px;
+        .workspace-body.inspector-open .inspector-pane {
+            width: 480px;
+            min-width: 420px;
         }
 
         .inspector-header {
-            padding: 0.75rem 1.25rem;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #18191c;
+            background-color: var(--header-bg);
+            flex-shrink: 0;
         }
 
         .inspector-title {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #ffffff;
+            gap: 8px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
         .inspector-actions {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 6px;
         }
 
         .inspector-btn {
-            background: var(--bg-surface);
+            background-color: var(--input-box-bg);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
-            padding: 0.25rem 0.6rem;
+            padding: 5px 9px;
             border-radius: 6px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 5px;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 0.72rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
         }
 
         .inspector-btn:hover {
-            color: #ffffff;
-            border-color: var(--blue-accent);
+            color: var(--wa-teal);
+            border-color: var(--wa-teal);
+        }
+
+        .btn-close-inspector {
+            padding: 5px;
         }
 
         .inspector-body {
             flex: 1;
-            padding: 1rem 1.25rem;
+            padding: 14px 16px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 14px;
+            background-color: var(--bg-app);
         }
 
         .api-box {
-            background: #16171a;
+            background-color: var(--input-box-bg);
             border: 1px solid var(--border-subtle);
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .api-box.stream-box-flex {
+            flex: 1;
+            min-height: 240px;
         }
 
         .api-box-header {
-            padding: 0.45rem 0.85rem;
-            background: #1c1d21;
+            padding: 8px 12px;
+            background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.73rem;
+            font-size: 0.72rem;
         }
 
         .api-box-title {
             display: flex;
             align-items: center;
-            gap: 0.45rem;
-            font-weight: 700;
-            color: #ffffff;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .api-target-badge {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-family: monospace;
         }
 
         .badge-method {
-            background: var(--google-blue);
+            background-color: var(--wa-teal);
             color: #ffffff;
-            padding: 0.1rem 0.4rem;
+            padding: 1px 6px;
             border-radius: 4px;
-            font-size: 0.65rem;
+            font-size: 0.64rem;
             font-weight: 700;
         }
 
         .badge-status {
-            padding: 0.15rem 0.45rem;
+            padding: 2px 7px;
             border-radius: 4px;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 700;
         }
 
-        .status-idle { background: #2c2d30; color: var(--text-secondary); }
-        .status-pending { background: rgba(251, 188, 4, 0.2); color: var(--google-yellow); }
-        .status-200 { background: rgba(52, 168, 83, 0.2); color: #81c995; }
-        .status-error { background: rgba(234, 67, 53, 0.2); color: #f28b82; }
+        .status-idle { background-color: var(--border-subtle); color: var(--text-muted); }
+        .status-pending { background-color: rgba(251, 188, 4, 0.18); color: #fbbc04; }
+        .status-200 { background-color: rgba(37, 211, 102, 0.18); color: var(--wa-green); }
+        .status-error { background-color: rgba(234, 67, 53, 0.18); color: #ea4335; }
 
         .api-meta-row {
-            padding: 0.4rem 0.85rem;
+            padding: 6px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.72rem;
-            background: #131416;
-            border-bottom: 1px solid #232428;
+            background-color: var(--bg-chat-canvas);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .api-meta-url {
-            color: var(--blue-accent);
+            color: var(--wa-teal);
+            font-family: monospace;
+        }
+
+        .api-meta-protocol {
+            color: var(--text-muted);
+            font-size: 0.68rem;
         }
 
         .api-headers-block {
-            padding: 0.5rem 0.85rem;
-            font-size: 0.72rem;
+            padding: 8px 12px;
+            font-size: 0.71rem;
             color: var(--text-secondary);
-            border-bottom: 1px solid #232428;
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
-            background: #141517;
+            gap: 3px;
+            background-color: var(--bg-app);
+            font-family: monospace;
         }
 
         .api-headers-block span {
-            color: #e3e3e3;
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .api-code-block {
-            padding: 0.65rem 0.85rem;
-            font-size: 0.75rem;
-            line-height: 1.5;
-            color: #8ab4f8;
+            padding: 10px 12px;
+            font-size: 0.74rem;
+            line-height: 1.45;
+            color: var(--wa-teal);
             white-space: pre-wrap;
-            background: #111214;
-            max-height: 150px;
+            background-color: var(--code-bg);
+            max-height: 120px;
             overflow-y: auto;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+            font-family: 'SFMono-Regular', Consolas, Menlo, monospace !important;
+        }
+
+        .api-box-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stream-counter {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .api-telemetry-row {
+            padding: 6px 12px;
+            background-color: var(--bg-app);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+        }
+
+        .telemetry-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .telemetry-label {
+            color: var(--text-muted);
+        }
+
+        .telemetry-value {
+            color: var(--wa-green);
+            font-weight: 600;
+            font-family: monospace;
         }
 
         .api-stream-block {
-            padding: 0.5rem 0.85rem;
-            background: #111214;
-            max-height: 250px;
+            padding: 8px 12px;
+            background-color: var(--code-bg);
+            flex: 1;
+            min-height: 140px;
+            max-height: 220px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
-            font-size: 0.73rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+            gap: 3px;
+            font-size: 0.72rem;
+            font-family: 'SFMono-Regular', Consolas, Menlo, monospace !important;
         }
 
         .stream-line {
             display: flex;
-            gap: 0.65rem;
-            line-height: 1.45;
-        }
-
-        .stream-line-num {
-            color: #5f6368;
-            user-select: none;
-            min-width: 20px;
-            text-align: right;
-        }
-
-        .stream-line-content {
-            color: #e3e3e3;
+            gap: 8px;
+            line-height: 1.4;
             word-break: break-all;
         }
 
-        .chunk-token { color: #81c995; }
-        .chunk-done { color: var(--google-yellow); font-weight: 700; }
-        .chunk-error { color: #f28b82; }
+        .stream-line-num {
+            color: var(--text-muted);
+            min-width: 20px;
+            text-align: right;
+            user-select: none;
+            flex-shrink: 0;
+            font-size: 0.68rem;
+        }
+
+        .stream-line-content {
+            color: var(--text-primary);
+        }
+
+        .line-placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .chunk-token {
+            color: var(--text-primary);
+        }
+
+        .chunk-done {
+            color: var(--wa-green);
+            font-weight: 600;
+        }
+
+        .chunk-error {
+            color: #ea4335;
+            font-weight: 600;
+        }
 
         .curl-box {
-            background: #16171a;
+            background-color: var(--input-box-bg);
             border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 0.75rem 0.85rem;
-            font-size: 0.73rem;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
-        .curl-box pre {
-            color: #c4c7c5;
-            margin-top: 0.4rem;
+        .curl-header {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .curl-code {
+            background-color: var(--code-bg);
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+            font-size: 0.72rem;
+            line-height: 1.4;
+            color: var(--wa-teal);
             white-space: pre-wrap;
-            line-height: 1.45;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+            font-family: 'SFMono-Regular', Consolas, Menlo, monospace !important;
+            margin: 0;
+            overflow-x: auto;
         }
 
-        /* Toast */
-        .toast {
+        /* Toast notification */
+        .cm-toast {
             position: fixed;
-            bottom: 5.5rem;
+            bottom: 24px;
             left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: #303134;
-            color: #ffffff;
+            transform: translateX(-50%) translateY(40px);
+            background-color: var(--header-bg);
+            color: var(--text-primary);
             border: 1px solid var(--border-subtle);
-            padding: 0.55rem 1.15rem;
-            border-radius: 9999px;
+            padding: 8px 18px;
+            border-radius: 20px;
             font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-pop);
             opacity: 0;
             pointer-events: none;
-            transition: all 0.25s ease;
-            z-index: 100;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            z-index: 200;
         }
 
-        .toast.show {
-            opacity: 1;
+        .cm-toast.show {
             transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 90;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-body.inspector-open .inspector-pane {
+                width: 380px;
+                min-width: 340px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .hero-title {
+                font-size: 1.6rem;
+            }
+            .bubble {
+                max-width: 88%;
+            }
+            .inspector-pane {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 95;
+                box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
+            }
+            .workspace-body.inspector-open .inspector-pane {
+                width: 100%;
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .suggestion-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 4-Color Accent Strip -->
-    <div class="color-strip">
-        <div class="c-blue"></div>
-        <div class="c-red"></div>
-        <div class="c-yellow"></div>
-        <div class="c-green"></div>
-    </div>
 
-    <!-- Header -->
-    <header>
-        <div class="brand-container">
-            <!-- Simple Clean Logo (No AI Slop) -->
-            <div class="brand-logo">
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="28" height="28" rx="7" fill="#1e1f20" stroke="#333538"/>
-                    <path d="M8.5 9.5L4.5 14L8.5 18.5" stroke="#4285F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M19.5 9.5L23.5 14L19.5 18.5" stroke="#34A853" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M15.5 8L12.5 20" stroke="#EA4335" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ================= SIDEBAR (GEMINI RIWAYAT & NEW CHAT) ================= -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="btn-new-chat" id="btnNewChat">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-            </div>
-            <span class="brand-name">CintaMamaAI</span>
+                <span>Chat Baru</span>
+            </button>
         </div>
 
-        <div class="header-actions">
-            <div class="status-badge">
-                <div class="status-dot"></div>
-                <span id="modelBadge">llama3.2:3b</span>
+        <div class="sidebar-history-title">Riwayat Percakapan</div>
+
+        <div class="sidebar-history-list" id="historyList">
+            <div class="history-empty-state" id="historyEmptyState">
+                Belum ada riwayat percakapan.<br>Mulai obrolan baru untuk menyimpan sesi.
+            </div>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN WRAPPER ================= -->
+    <div class="main-wrapper">
+
+        <!-- ================= TOP HEADER ================= -->
+        <header class="top-header">
+            <div class="header-left">
+                <!-- Sidebar Layout Toggle Icon -->
+                <button class="header-action-btn" id="btnToggleSidebar" title="Buka/Tutup Sidebar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                    </svg>
+                </button>
+
+                <!-- Custom "CM AI" Minimalist Logo -->
+                <div class="brand-container">
+                    <svg class="cm-logo-svg" width="34" height="34" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="44" height="44" rx="10" fill="url(#cm-grad-hdr)"/>
+                        <text x="22" y="19" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="1">CM</text>
+                        <line x1="12" y1="23.5" x2="32" y2="23.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
+                        <text x="22" y="35.5" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="700" font-size="11" fill="#25D366" letter-spacing="1.5">AI</text>
+                        <defs>
+                            <linearGradient id="cm-grad-hdr" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#075E54"/>
+                                <stop offset="1" stop-color="#128C7E"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="brand-title">CintaMama AI</span>
+                </div>
             </div>
 
-            <button class="btn-icon" id="clearBtn" title="Reset Percakapan">
-                <i class="fa-solid fa-rotate-right"></i>
-            </button>
+            <div class="header-right">
+                <!-- Backend & Token Stream Inspector Toggle Button -->
+                <button class="header-action-btn" id="btnToggleInspector" title="Inspektor Backend & Aliran Token">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                </button>
 
-            <button class="btn-icon" id="toggleSplitBtn" title="Buka API Inspector">
-                <i class="fa-solid fa-terminal"></i>
-            </button>
+                <!-- Theme Mode Toggle Button (Top Right) -->
+                <button class="header-action-btn" id="btnThemeToggle" title="Ganti Mode Terang / Gelap">
+                    <span id="themeIconContainer"></span>
+                </button>
+            </div>
+        </header>
 
-            <a href="/docs" target="_blank" class="btn-icon" title="Swagger API Docs">
-                <i class="fa-solid fa-book-open"></i>
-            </a>
-        </div>
-    </header>
+        <!-- ================= WORKSPACE BODY (SPLIT VIEW) ================= -->
+        <div class="workspace-body" id="workspaceBody">
+            <!-- Left: Chat Pane -->
+            <div class="chat-pane" id="chatPane">
+                <!-- ================= CHAT SCROLL AREA ================= -->
+                <main class="chat-scroll-area" id="chatScrollArea">
+            <div class="chat-centered-content" id="chatContent">
 
-    <!-- Workspace Grid Layout -->
-    <div class="workspace-grid" id="workspaceGrid">
-        <!-- Left: Chat Panel -->
-        <div class="chat-pane" id="chatPane">
-            <div class="chat-container">
-                <!-- Clean Welcome Hero (No Subtitle Clutter) -->
-                <div class="welcome-hero" id="welcomeHero">
-                    <h2>Dokumentasi Bahasa Pemrograman</h2>
-                    <p>Pilih bahasa untuk eksplorasi sintaks resmi dan fitur versi terkini</p>
+                <!-- Welcome Screen (Gemini Style) -->
+                <div class="hero-welcome" id="heroWelcome">
+                    <div class="hero-logo-large">
+                        <svg class="cm-logo-svg" width="64" height="64" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="44" height="44" rx="12" fill="url(#cm-grad-hero)"/>
+                            <text x="22" y="19" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="1">CM</text>
+                            <line x1="12" y1="23.5" x2="32" y2="23.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
+                            <text x="22" y="35.5" text-anchor="middle" font-family="'Google Sans', -apple-system, sans-serif" font-weight="700" font-size="11" fill="#25D366" letter-spacing="1.5">AI</text>
+                            <defs>
+                                <linearGradient id="cm-grad-hero" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#075E54"/>
+                                    <stop offset="1" stop-color="#128C7E"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
 
-                    <!-- 4 Recommendation Chips: Java, Python, C#, JavaScript -->
-                    <div class="prompt-chips">
-                        <!-- Java -->
-                        <div class="chip" onclick="usePrompt('Jelaskan fitur modern di Java (seperti Records, Sealed Classes, Pattern Matching, dan Virtual Threads) beserta contoh kodenya!')">
-                            <div class="chip-icon java-icon">
-                                <i class="fa-brands fa-java"></i>
+                    <h1 class="hero-title">Hi, Cinta Mama AI disini</h1>
+                    <p class="hero-subtitle">Asisten dokumentasi pemograman anda</p>
+
+                    <div class="suggestion-grid">
+                        <div class="suggestion-card" data-prompt="Bagaimana cara setup compiler C (C17/C23) dan Makefile di macOS dan Linux?">
+                            <div class="suggestion-card-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="4 17 10 11 4 5"></polyline>
+                                    <line x1="12" y1="19" x2="20" y2="19"></line>
+                                </svg>
+                                <span>Setup Compiler C</span>
                             </div>
-                            <div class="chip-text">Java</div>
+                            <div class="suggestion-card-text">
+                                Standar konfigurasi compiler C17/C23 dan toolchain build.
+                            </div>
                         </div>
 
-                        <!-- Python -->
-                        <div class="chip" onclick="usePrompt('Jelaskan fitur modern di Python (seperti Type Hints, Structural Pattern Matching match-case, dan Generator) beserta contoh kodenya!')">
-                            <div class="chip-icon python-icon">
-                                <i class="fa-brands fa-python"></i>
+                        <div class="suggestion-card" data-prompt="Contoh penanganan Promise dan async/await pada TypeScript modern.">
+                            <div class="suggestion-card-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="16 18 22 12 16 6"></polyline>
+                                    <polyline points="8 6 2 12 8 18"></polyline>
+                                </svg>
+                                <span>TypeScript Async</span>
                             </div>
-                            <div class="chip-text">Python</div>
+                            <div class="suggestion-card-text">
+                                Pola penulisan fungsi asynchronous dan type safety.
+                            </div>
                         </div>
 
-                        <!-- C# -->
-                        <div class="chip" onclick="usePrompt('Jelaskan fitur modern di C# (seperti Records, Pattern Matching, dan async/await) beserta contoh kodenya!')">
-                            <div class="chip-icon csharp-icon">
-                                <span class="csharp-badge">C#</span>
+                        <div class="suggestion-card" data-prompt="Langkah membuat dan mengisolasi virtual environment di Python 3.">
+                            <div class="suggestion-card-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                </svg>
+                                <span>Virtualenv Python</span>
                             </div>
-                            <div class="chip-text">C#</div>
+                            <div class="suggestion-card-text">
+                                Praktik terbaik isolasi dependensi dan pip management.
+                            </div>
                         </div>
 
-                        <!-- JavaScript -->
-                        <div class="chip" onclick="usePrompt('Jelaskan fitur modern di JavaScript (seperti ES6+, Async/Await, Destructuring, dan Modules) beserta contoh kodenya!')">
-                            <div class="chip-icon js-icon">
-                                <i class="fa-brands fa-js"></i>
+                        <div class="suggestion-card" data-prompt="Jelaskan konsep ownership, borrow, dan reference di bahasa Rust.">
+                            <div class="suggestion-card-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span>Ownership di Rust</span>
                             </div>
-                            <div class="chip-text">JavaScript</div>
+                            <div class="suggestion-card-text">
+                                Manajemen memori aman tanpa garbage collector.
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="message-group" id="messageGroup"></div>
-            </div>
+                <!-- Messages container -->
+                <div id="messagesList" style="display: flex; flex-direction: column; gap: 16px;"></div>
 
-            <!-- Fixed Input Dock -->
-            <div class="input-dock">
-                <div class="input-card">
+            </div>
+        </main>
+
+        <!-- ================= FLOATING INPUT BAR (GEMINI STYLE) ================= -->
+        <div class="input-bar-container">
+            <div class="input-box-wrapper">
+                <div class="input-main-row">
                     <textarea 
+                        class="input-textarea" 
                         id="promptInput" 
-                        rows="1" 
-                        placeholder="Tanyakan sintaks atau dokumentasi Java, Python, C#, atau JavaScript... (Shift+Enter untuk baris baru)"
+                        placeholder="Tanyakan tentang sintaks atau setup pemrograman..." 
+                        rows="1"
                     ></textarea>
-                    <button class="btn-send" id="sendBtn" title="Kirim ke CintaMamaAI">
-                        <i class="fa-solid fa-arrow-up"></i>
+                    <button class="btn-send" id="btnSend" title="Kirim Pesan" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
                     </button>
                 </div>
+
+                <!-- Model Selector Dropdown inside Input Box (Gemini Style) -->
+                <div class="input-footer-row">
+                    <div class="model-dropdown-container">
+                        <button class="model-select-btn" id="btnModelDropdown" type="button" title="Pilih Model">
+                            <svg class="sparkle-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+                            </svg>
+                            <span id="activeModelLabel">Llama 3.2 3B</span>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="model-dropdown-menu" id="modelDropdownMenu">
+                            <div class="model-dropdown-item active">
+                                <div class="model-dropdown-item-title">
+                                    <span id="dropdownModelName">Llama 3.2 3B</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="model-dropdown-item-sub">Ollama Local Instance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-disclaimer">
+                CintaMama AI dapat membuat kekeliruan. Selalu verifikasi sintaks dan kode penting sebelum produksi.
             </div>
         </div>
 
-        <!-- Right: Collapsible API Inspector Pane -->
-        <div class="inspector-pane" id="inspectorPane">
+        </div> <!-- /.chat-pane -->
+
+        <!-- ================= BACKEND & STREAM INSPECTOR PANE ================= -->
+        <aside class="inspector-pane" id="inspectorPane">
             <div class="inspector-header">
                 <div class="inspector-title">
-                    <i class="fa-solid fa-terminal" style="color:var(--google-blue);"></i>
-                    <span>API & STREAM INSPECTOR</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--wa-teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                    <span>Backend & Stream Inspector</span>
                 </div>
                 <div class="inspector-actions">
-                    <button class="inspector-btn" id="copyCurlBtn" title="Salin perintah cURL">
-                        <i class="fa-regular fa-copy"></i> cURL
+                    <button class="inspector-btn" id="btnCopyCurl" title="Salin perintah cURL">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>cURL</span>
                     </button>
-                    <button class="inspector-btn" id="clearApiLogsBtn" title="Bersihkan log stream">
-                        <i class="fa-solid fa-trash-can"></i> Clear
+                    <button class="inspector-btn" id="btnClearInspector" title="Bersihkan log stream">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        <span>Clear</span>
                     </button>
-                    <button class="inspector-btn" id="closeInspectorBtn" title="Tutup Split View">
-                        <i class="fa-solid fa-xmark"></i>
+                    <button class="inspector-btn btn-close-inspector" id="btnCloseInspector" title="Tutup Inspector">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -949,122 +1427,169 @@
                             <span class="badge-method">POST</span>
                             <span>OUTGOING HTTP REQUEST</span>
                         </div>
-                        <span style="color:var(--text-secondary); font-size:0.68rem;">TO: OLLAMA CONTAINER</span>
+                        <span class="api-target-badge">TO: /generate/stream</span>
                     </div>
 
                     <div class="api-meta-row">
-                        <span class="api-meta-url" id="reqUrl">http://ollama:11434/api/generate</span>
-                        <span style="color:var(--text-secondary);">HTTP/1.1</span>
+                        <span class="api-meta-url" id="reqUrl">http://localhost:8000/generate/stream</span>
+                        <span class="api-meta-protocol">HTTP/1.1</span>
                     </div>
 
                     <div class="api-headers-block">
-                        <div><span>Host:</span> ollama:11434</div>
+                        <div><span>Host:</span> localhost:8000</div>
                         <div><span>Content-Type:</span> application/json</div>
                         <div><span>Accept:</span> application/x-ndjson</div>
                     </div>
 
-                    <div class="api-code-block" id="reqBodyJson">// Request payload JSON akan tampil di sini saat request dikirim
+                    <div class="api-code-block" id="reqBodyJson">// Payload JSON request akan tampil di sini saat pesan dikirim
 {
   "model": "llama3.2:3b",
-  "prompt": "Menunggu input...",
+  "prompt": "Menunggu input pertanyaan...",
   "stream": true
 }</div>
                 </div>
 
                 <!-- Incoming HTTP Response & Live Stream Section -->
-                <div class="api-box" style="flex:1;">
+                <div class="api-box stream-box-flex">
                     <div class="api-box-header">
                         <div class="api-box-title">
-                            <i class="fa-solid fa-arrow-down" style="color:var(--google-green);"></i>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--wa-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <polyline points="19 12 12 19 5 12"></polyline>
+                            </svg>
                             <span>INCOMING HTTP STREAM (RAW NDJSON)</span>
                         </div>
-                        <div style="display:flex; align-items:center; gap:0.5rem;">
-                            <span id="streamCounter" style="color:var(--text-secondary); font-size:0.68rem;">0 chunks</span>
+                        <div class="api-box-actions">
+                            <span class="stream-counter" id="streamCounter">0 chunks</span>
                             <span class="badge-status status-idle" id="resStatusBadge">IDLE</span>
                         </div>
                     </div>
 
                     <div class="api-meta-row">
-                        <span style="color:#e8eaed;" id="resProtocolStatus">HTTP/1.1 --- (Waiting)</span>
-                        <span style="color:var(--google-yellow);" id="resLatency">0.0ms</span>
+                        <span class="api-meta-status" id="resProtocolStatus">HTTP/1.1 --- (Waiting)</span>
+                        <span class="api-meta-latency" id="resLatency">0.0ms</span>
                     </div>
 
-                    <div class="api-headers-block">
-                        <div><span>content-type:</span> application/x-ndjson</div>
-                        <div><span>transfer-encoding:</span> chunked</div>
-                        <div><span>x-ollama-model:</span> <span id="resHeaderModel">llama3.2:3b</span></div>
+                    <div class="api-telemetry-row" id="apiTelemetryRow">
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Model:</span>
+                            <span class="telemetry-value" id="resHeaderModel">llama3.2:3b</span>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Speed:</span>
+                            <span class="telemetry-value" id="resSpeed">0 t/s</span>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Tokens:</span>
+                            <span class="telemetry-value" id="resTokens">0 tok</span>
+                        </div>
                     </div>
 
                     <div class="api-stream-block" id="apiStreamBlock">
                         <div class="stream-line">
                             <span class="stream-line-num">0</span>
-                            <span class="stream-line-content" style="color:var(--text-secondary);">// Siap menerima raw streaming chunks dari /api/generate...</span>
+                            <span class="stream-line-content line-placeholder">// Siap menerima raw streaming chunks dari Ollama...</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Executable cURL Box -->
                 <div class="curl-box">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:600; color:#ffffff;"><i class="fa-solid fa-terminal"></i> Equivalent cURL Command:</span>
+                    <div class="curl-header">
+                        <span class="curl-title">Perintah cURL Ekivalen:</span>
                     </div>
-                    <pre id="curlCommand">curl -N -X POST http://localhost:8000/generate/stream \
+                    <pre class="curl-code" id="curlCommand">curl -N -X POST http://localhost:8000/generate/stream \
   -H "Content-Type: application/json" \
   -d '{"prompt": "Hello"}'</pre>
                 </div>
             </div>
-        </div>
-    </div>
+        </aside>
+
+        </div> <!-- /.workspace-body -->
+
+    </div> <!-- /.main-wrapper -->
 
     <!-- Toast Notification -->
-    <div class="toast" id="toast">Teks disalin ke clipboard!</div>
+    <div class="cm-toast" id="cmToast">Teks disalin ke clipboard!</div>
 
+    <!-- ================= JAVASCRIPT ================= -->
     <script>
+        // State
+        let currentTheme = localStorage.getItem('cm_theme') || 'dark';
+        let chatSessions = JSON.parse(localStorage.getItem('cm_chat_sessions') || '[]');
+        let currentSessionId = null;
+        let isGenerating = false;
+
+        // Elements
+        const htmlEl = document.documentElement;
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+        const btnNewChat = document.getElementById('btnNewChat');
+        const historyList = document.getElementById('historyList');
+        const historyEmptyState = document.getElementById('historyEmptyState');
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        const themeIconContainer = document.getElementById('themeIconContainer');
+        
+        const chatScrollArea = document.getElementById('chatScrollArea');
+        const heroWelcome = document.getElementById('heroWelcome');
+        const messagesList = document.getElementById('messagesList');
         const promptInput = document.getElementById('promptInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const messageGroup = document.getElementById('messageGroup');
-        const welcomeHero = document.getElementById('welcomeHero');
-        const clearBtn = document.getElementById('clearBtn');
-        const modelBadge = document.getElementById('modelBadge');
-        const toast = document.getElementById('toast');
-        const chatPane = document.getElementById('chatPane');
+        const btnSend = document.getElementById('btnSend');
+        
+        const activeModelLabel = document.getElementById('activeModelLabel');
+        const dropdownModelName = document.getElementById('dropdownModelName');
+        const btnModelDropdown = document.getElementById('btnModelDropdown');
+        const modelDropdownMenu = document.getElementById('modelDropdownMenu');
 
-        // Split Panel Elements
-        const toggleSplitBtn = document.getElementById('toggleSplitBtn');
-        const closeInspectorBtn = document.getElementById('closeInspectorBtn');
-        const workspaceGrid = document.getElementById('workspaceGrid');
-        const clearApiLogsBtn = document.getElementById('clearApiLogsBtn');
-        const copyCurlBtn = document.getElementById('copyCurlBtn');
+        // Inspector DOM Elements
+        const workspaceBody = document.getElementById('workspaceBody');
+        const btnToggleInspector = document.getElementById('btnToggleInspector');
+        const inspectorPane = document.getElementById('inspectorPane');
+        const btnCloseInspector = document.getElementById('btnCloseInspector');
+        const btnClearInspector = document.getElementById('btnClearInspector');
+        const btnCopyCurl = document.getElementById('btnCopyCurl');
+        const cmToast = document.getElementById('cmToast');
 
-        // Backend Inspector DOM Elements
         const reqBodyJson = document.getElementById('reqBodyJson');
         const resStatusBadge = document.getElementById('resStatusBadge');
         const resProtocolStatus = document.getElementById('resProtocolStatus');
         const resLatency = document.getElementById('resLatency');
         const resHeaderModel = document.getElementById('resHeaderModel');
+        const resSpeed = document.getElementById('resSpeed');
+        const resTokens = document.getElementById('resTokens');
         const apiStreamBlock = document.getElementById('apiStreamBlock');
         const streamCounter = document.getElementById('streamCounter');
         const curlCommand = document.getElementById('curlCommand');
 
-        let lastPrompt = 'Hello';
-        let currentModel = 'llama3.2:3b';
+        // Toast Helper
+        function showToast(msg) {
+            if (!cmToast) return;
+            cmToast.textContent = msg;
+            cmToast.classList.add('show');
+            setTimeout(() => {
+                cmToast.classList.remove('show');
+            }, 2200);
+        }
 
-        // Toggle Split Page View
-        toggleSplitBtn.addEventListener('click', () => {
-            workspaceGrid.classList.toggle('split-active');
-            toggleSplitBtn.classList.toggle('active');
+        // Toggle Inspector Split View
+        btnToggleInspector.addEventListener('click', () => {
+            const isOpen = workspaceBody.classList.toggle('inspector-open');
+            btnToggleInspector.classList.toggle('active', isOpen);
+            localStorage.setItem('cm_inspector_open', isOpen);
         });
 
-        closeInspectorBtn.addEventListener('click', () => {
-            workspaceGrid.classList.remove('split-active');
-            toggleSplitBtn.classList.remove('active');
+        btnCloseInspector.addEventListener('click', () => {
+            workspaceBody.classList.remove('inspector-open');
+            btnToggleInspector.classList.remove('active');
+            localStorage.setItem('cm_inspector_open', 'false');
         });
 
-        clearApiLogsBtn.addEventListener('click', () => {
+        btnClearInspector.addEventListener('click', () => {
             apiStreamBlock.innerHTML = `
                 <div class="stream-line">
                     <span class="stream-line-num">0</span>
-                    <span class="stream-line-content" style="color:#5f6368;">// Log streaming dibersihkan.</span>
+                    <span class="stream-line-content line-placeholder">// Log streaming dibersihkan.</span>
                 </div>
             `;
             streamCounter.textContent = '0 chunks';
@@ -1072,49 +1597,20 @@
             resStatusBadge.textContent = 'IDLE';
             resProtocolStatus.textContent = 'HTTP/1.1 --- (Waiting)';
             resLatency.textContent = '0.0ms';
+            resSpeed.textContent = '0 t/s';
+            resTokens.textContent = '0 tok';
         });
 
-        copyCurlBtn.addEventListener('click', () => {
+        btnCopyCurl.addEventListener('click', () => {
             navigator.clipboard.writeText(curlCommand.textContent).then(() => {
-                showToast("cURL command disalin ke clipboard!");
+                showToast("Perintah cURL disalin ke clipboard!");
             });
         });
 
-        // Auto-expand textarea
-        promptInput.addEventListener('input', () => {
-            promptInput.style.height = 'auto';
-            promptInput.style.height = Math.min(promptInput.scrollHeight, 160) + 'px';
-        });
-
-        // Submit on Enter (without Shift)
-        promptInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        sendBtn.addEventListener('click', sendMessage);
-
-        clearBtn.addEventListener('click', () => {
-            messageGroup.innerHTML = '';
-            welcomeHero.style.display = 'block';
-            promptInput.value = '';
-            promptInput.focus();
-        });
-
-        function usePrompt(text) {
-            promptInput.value = text;
-            promptInput.style.height = 'auto';
-            promptInput.style.height = promptInput.scrollHeight + 'px';
-            promptInput.focus();
-            sendMessage();
-        }
-
-        function showToast(msg) {
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+        // Restore Inspector state from localStorage if open
+        if (localStorage.getItem('cm_inspector_open') === 'true') {
+            workspaceBody.classList.add('inspector-open');
+            btnToggleInspector.classList.add('active');
         }
 
         function appendStreamLine(lineNum, rawJsonString, isDone = false, isError = false) {
@@ -1138,51 +1634,190 @@
             apiStreamBlock.scrollTop = apiStreamBlock.scrollHeight;
         }
 
-        async function sendMessage() {
-            const prompt = promptInput.value.trim();
-            if (!prompt) return;
+        // Inline SVGs for Theme
+        const sunSvg = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        `;
+        const moonSvg = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        `;
 
-            welcomeHero.style.display = 'none';
-            lastPrompt = prompt;
+        // Apply Initial Theme
+        applyTheme(currentTheme);
 
-            // Update Outgoing Request Box
+        // Fetch Health / Active Model on load
+        fetch('/health')
+            .then(res => res.json())
+            .then(data => {
+                if (data.model) {
+                    activeModelLabel.textContent = data.model;
+                    dropdownModelName.textContent = data.model;
+                }
+            })
+            .catch(() => {});
+
+        // Render Initial History
+        renderHistoryList();
+
+        // Theme Toggle Functions
+        function applyTheme(theme) {
+            currentTheme = theme;
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('cm_theme', theme);
+            themeIconContainer.innerHTML = theme === 'dark' ? sunSvg : moonSvg;
+        }
+
+        btnThemeToggle.addEventListener('click', () => {
+            applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+
+        // Model Dropdown inside Input Box
+        btnModelDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+            modelDropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            modelDropdownMenu.classList.remove('show');
+        });
+
+        // Sidebar Toggle
+        btnToggleSidebar.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-open');
+                sidebarOverlay.classList.toggle('active');
+            } else {
+                sidebar.classList.toggle('collapsed');
+            }
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Input textarea auto-resize & submit on enter
+        promptInput.addEventListener('input', () => {
+            promptInput.style.height = 'auto';
+            promptInput.style.height = Math.min(promptInput.scrollHeight, 160) + 'px';
+            btnSend.disabled = !promptInput.value.trim() || isGenerating;
+        });
+
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!btnSend.disabled) {
+                    handleSendMessage();
+                }
+            }
+        });
+
+        btnSend.addEventListener('click', handleSendMessage);
+
+        // Suggestion Cards click
+        document.querySelectorAll('.suggestion-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const prompt = card.getAttribute('data-prompt');
+                if (prompt) {
+                    promptInput.value = prompt;
+                    promptInput.dispatchEvent(new Event('input'));
+                    handleSendMessage();
+                }
+            });
+        });
+
+        // New Chat
+        btnNewChat.addEventListener('click', () => {
+            currentSessionId = null;
+            messagesList.innerHTML = '';
+            heroWelcome.style.display = 'flex';
+            promptInput.value = '';
+            promptInput.style.height = 'auto';
+            btnSend.disabled = true;
+            renderHistoryList();
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+
+        // Send Message Handler
+        async function handleSendMessage() {
+            const text = promptInput.value.trim();
+            if (!text || isGenerating) return;
+
+            isGenerating = true;
+            btnSend.disabled = true;
+            promptInput.value = '';
+            promptInput.style.height = 'auto';
+
+            // Hide hero welcome
+            heroWelcome.style.display = 'none';
+
+            // Update Outgoing Request Box in Inspector
+            const currentSelectedModel = activeModelLabel.textContent.trim() || 'llama3.2:3b';
+            resHeaderModel.textContent = currentSelectedModel;
             const payloadObject = {
-                model: currentModel,
-                prompt: prompt,
+                model: currentSelectedModel,
+                prompt: text,
                 stream: true
             };
             reqBodyJson.textContent = JSON.stringify(payloadObject, null, 2);
 
-            // Update cURL Box
-            curlCommand.textContent = `curl -N -X POST http://localhost:8000/generate/stream \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify({ prompt: prompt })}'`;
+            // Update cURL Box in Inspector
+            curlCommand.textContent = `curl -N -X POST http://localhost:8000/generate/stream \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify({ prompt: text })}'`;
 
-            // Reset Stream Output Box
+            // Reset Stream Telemetry in Inspector
             apiStreamBlock.innerHTML = '';
             streamCounter.textContent = '0 chunks';
             resStatusBadge.className = 'badge-status status-pending';
             resStatusBadge.textContent = 'CONNECTING';
-            resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Streaming)';
+            resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Transfer-Encoding: chunked)';
             resLatency.textContent = '...';
-
-            // Append user message
-            appendUserMessage(prompt);
-            promptInput.value = '';
-            promptInput.style.height = 'auto';
-            promptInput.disabled = true;
-            sendBtn.disabled = true;
+            resSpeed.textContent = '...';
+            resTokens.textContent = '...';
 
             const startTime = performance.now();
             let chunkIndex = 0;
-            let fullText = '';
 
-            const { messageContentEl, bodyEl } = appendStreamingAiBubble();
-            chatPane.scrollTo({ top: chatPane.scrollHeight, behavior: 'smooth' });
+            // Initialize or retrieve session
+            if (!currentSessionId) {
+                currentSessionId = 'session_' + Date.now();
+                const newSession = {
+                    id: currentSessionId,
+                    title: text.length > 30 ? text.substring(0, 30) + '...' : text,
+                    timestamp: new Date().toISOString(),
+                    messages: []
+                };
+                chatSessions.unshift(newSession);
+            }
+
+            // Append User Bubble
+            appendUserMessage(text);
+            saveMessageToCurrentSession('user', text);
+
+            // Append Streaming AI Bubble
+            const { bubbleEl, bodyEl } = appendAiMessage();
+
+            let fullResponseText = '';
 
             try {
                 const response = await fetch('/generate/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: prompt })
+                    body: JSON.stringify({ prompt: text })
                 });
 
                 const ttfb = (performance.now() - startTime).toFixed(1);
@@ -1192,19 +1827,18 @@
                     resStatusBadge.className = 'badge-status status-error';
                     resStatusBadge.textContent = `${response.status} ERROR`;
                     resProtocolStatus.textContent = `HTTP/1.1 ${response.status} ${response.statusText}`;
-                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
+                    throw new Error(`HTTP error ${response.status}`);
                 }
 
                 resStatusBadge.className = 'badge-status status-200';
-                resStatusBadge.textContent = '200 STREAMING';
-                resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Transfer-Encoding: chunked)';
+                resStatusBadge.textContent = 'STREAMING';
 
                 const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
+                const decoder = new TextDecoder();
                 let buffer = '';
 
                 while (true) {
-                    const { value, done } = await reader.read();
+                    const { done, value } = await reader.read();
                     if (done) break;
 
                     buffer += decoder.decode(value, { stream: true });
@@ -1217,115 +1851,127 @@
                         streamCounter.textContent = `${chunkIndex} chunks`;
 
                         try {
-                            const parsed = JSON.parse(line);
-
-                            if (parsed.error) {
-                                throw new Error(parsed.error);
+                            const data = JSON.parse(line);
+                            if (data.error) {
+                                throw new Error(data.error);
                             }
-
-                            if (parsed.model) {
-                                currentModel = parsed.model;
-                                modelBadge.textContent = currentModel;
-                                resHeaderModel.textContent = currentModel;
+                            if (data.model) {
+                                resHeaderModel.textContent = data.model;
                             }
-
-                            if (parsed.response) {
-                                fullText += parsed.response;
-                                bodyEl.textContent = fullText;
-                                chatPane.scrollTop = chatPane.scrollHeight;
+                            if (data.response) {
+                                fullResponseText += data.response;
+                                bodyEl.textContent = fullResponseText;
+                                chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
                                 appendStreamLine(chunkIndex, line, false, false);
                             }
-
-                            if (parsed.done) {
+                            if (data.done) {
                                 const totalMs = (performance.now() - startTime).toFixed(1);
                                 resLatency.textContent = `${totalMs}ms Total`;
                                 resStatusBadge.className = 'badge-status status-200';
                                 resStatusBadge.textContent = '200 DONE';
+
+                                if (data.eval_count && data.eval_duration) {
+                                    const speed = (data.eval_count / (data.eval_duration / 1e9)).toFixed(1);
+                                    resSpeed.textContent = `${speed} t/s`;
+                                    resTokens.textContent = `${data.eval_count} tok`;
+                                }
                                 appendStreamLine(chunkIndex, line, true, false);
                             }
-                        } catch (e) {
-                            if (e.message && e.message.includes('Ollama error')) {
-                                throw e;
+                        } catch (parseErr) {
+                            if (parseErr.message && parseErr.message.includes('Ollama error')) {
+                                throw parseErr;
                             }
                         }
                     }
                 }
 
-                finalizeAiBubble(messageContentEl, bodyEl, fullText, currentModel);
+                // Finalize Markdown Rendering
+                finalizeAiMessage(bodyEl, fullResponseText);
+                saveMessageToCurrentSession('assistant', fullResponseText);
 
             } catch (err) {
                 resStatusBadge.className = 'badge-status status-error';
                 resStatusBadge.textContent = 'ERROR';
                 resProtocolStatus.textContent = 'HTTP/1.1 Connection Failed';
-                appendStreamLine(chunkIndex + 1, `{"error": "${err.message}"}`, false, true);
-                bodyEl.innerHTML = `<span style="color:#f28b82;">[ERROR] Terjadi kesalahan: ${escapeHtml(err.message)}</span>`;
+                appendStreamLine(chunkIndex + 1, JSON.stringify({ error: err.message }), false, true);
+                bodyEl.innerHTML = `<span style="color:#ea4335;">[ERROR] Gagal memproses: ${escapeHtml(err.message)}</span>`;
             } finally {
-                promptInput.disabled = false;
-                sendBtn.disabled = false;
+                isGenerating = false;
+                btnSend.disabled = !promptInput.value.trim();
                 promptInput.focus();
-                chatPane.scrollTop = chatPane.scrollHeight;
+                renderHistoryList();
             }
         }
 
         function appendUserMessage(text) {
-            const msgEl = document.createElement('div');
-            msgEl.className = 'message';
-            msgEl.innerHTML = `
-                <div class="message-avatar user-avatar">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <div class="message-content user-message">
-                    <div class="message-header">
+            const row = document.createElement('div');
+            row.className = 'message-row user-row';
+            row.innerHTML = `
+                <div class="bubble bubble-user">
+                    <div class="message-meta-header">
                         <span>Anda</span>
                         <span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     <div class="message-body">${escapeHtml(text)}</div>
                 </div>
-            `;
-            messageGroup.appendChild(msgEl);
-        }
-
-        function appendStreamingAiBubble() {
-            const msgEl = document.createElement('div');
-            msgEl.className = 'message';
-            msgEl.innerHTML = `
-                <div class="message-avatar ai-avatar">
-                    <!-- Simple Clean Logo Icon -->
-                    <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
-                        <path d="M8.5 9.5L4.5 14L8.5 18.5" stroke="#4285F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M19.5 9.5L23.5 14L19.5 18.5" stroke="#34A853" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.5 8L12.5 20" stroke="#EA4335" stroke-width="2.4" stroke-linecap="round"/>
+                <div class="avatar-wrap user-avatar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </div>
-                <div class="message-content ai-message">
-                    <div class="message-header">
-                        <span class="message-model">CintaMamaAI (Streaming...)</span>
+            `;
+            messagesList.appendChild(row);
+            chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+        }
+
+        function appendAiMessage() {
+            const row = document.createElement('div');
+            row.className = 'message-row ai-row';
+            row.innerHTML = `
+                <div class="avatar-wrap ai-avatar">
+                    <svg class="cm-logo-svg" width="30" height="30" viewBox="0 0 44 44" fill="none">
+                        <rect width="44" height="44" rx="9" fill="url(#cm-ai-msg)"/>
+                        <text x="22" y="19" text-anchor="middle" font-family="'Google Sans', sans-serif" font-weight="800" font-size="14" fill="#FFFFFF">CM</text>
+                        <line x1="12" y1="23.5" x2="32" y2="23.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <text x="22" y="35.5" text-anchor="middle" font-family="'Google Sans', sans-serif" font-weight="700" font-size="11" fill="#25D366">AI</text>
+                        <defs>
+                            <linearGradient id="cm-ai-msg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#075E54"/>
+                                <stop offset="1" stop-color="#128C7E"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="bubble bubble-ai">
+                    <div class="message-meta-header">
+                        <span>CintaMama AI</span>
                         <span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     <div class="message-body"><span class="body-text"></span><span class="cursor-blink"></span></div>
                 </div>
             `;
-            messageGroup.appendChild(msgEl);
-            const messageContentEl = msgEl.querySelector('.message-content');
-            const bodyEl = msgEl.querySelector('.body-text');
-            return { messageContentEl, bodyEl };
+            messagesList.appendChild(row);
+            chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+            const bubbleEl = row.querySelector('.bubble-ai');
+            const bodyEl = row.querySelector('.body-text');
+            return { bubbleEl, bodyEl };
         }
 
-        function finalizeAiBubble(contentEl, bodyEl, text, model) {
-            const cursor = contentEl.querySelector('.cursor-blink');
+        function finalizeAiMessage(bodyEl, text) {
+            const parent = bodyEl.parentElement;
+            const cursor = parent.querySelector('.cursor-blink');
             if (cursor) cursor.remove();
-
-            const modelLabel = contentEl.querySelector('.message-model');
-            if (modelLabel) modelLabel.textContent = `CintaMamaAI • ${model}`;
 
             if (window.marked && text) {
                 try {
                     bodyEl.innerHTML = marked.parse(text);
 
+                    // Syntax highlight & copy buttons
                     bodyEl.querySelectorAll('pre code').forEach((block) => {
                         if (window.hljs) hljs.highlightElement(block);
                         const pre = block.parentElement;
-                        
+
                         let lang = 'CODE';
                         const match = block.className.match(/language-(\w+)/);
                         if (match) lang = match[1].toUpperCase();
@@ -1335,34 +1981,139 @@
                         headerBar.innerHTML = `
                             <span>${lang}</span>
                             <button class="btn-copy-code" title="Salin kode">
-                                <i class="fa-regular fa-copy"></i> Copy
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span>Salin</span>
                             </button>
                         `;
+
                         const copyBtn = headerBar.querySelector('.btn-copy-code');
                         copyBtn.addEventListener('click', () => {
                             navigator.clipboard.writeText(block.innerText).then(() => {
-                                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                                copyBtn.innerHTML = `
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    <span>Tersalin</span>
+                                `;
                                 setTimeout(() => {
-                                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+                                    copyBtn.innerHTML = `
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        <span>Salin</span>
+                                    `;
                                 }, 2000);
                             });
                         });
+
                         pre.insertBefore(headerBar, block);
                     });
                 } catch (e) {
-                    console.error("Markdown parse error:", e);
                     bodyEl.textContent = text;
                 }
+            } else {
+                bodyEl.textContent = text;
+            }
+            chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+        }
+
+        // Local Storage Session Management
+        function saveMessageToCurrentSession(role, text) {
+            if (!currentSessionId) return;
+            const session = chatSessions.find(s => s.id === currentSessionId);
+            if (session) {
+                session.messages.push({
+                    role: role,
+                    text: text,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('cm_chat_sessions', JSON.stringify(chatSessions));
+            }
+        }
+
+        function renderHistoryList() {
+            historyList.innerHTML = '';
+            if (!chatSessions || chatSessions.length === 0) {
+                historyList.appendChild(historyEmptyState);
+                return;
+            }
+
+            chatSessions.forEach(session => {
+                const item = document.createElement('div');
+                item.className = 'history-item' + (session.id === currentSessionId ? ' active' : '');
+                item.innerHTML = `
+                    <div class="history-title-wrap">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span class="history-title-text">${escapeHtml(session.title)}</span>
+                    </div>
+                    <button class="btn-delete-history" title="Hapus sesi">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                `;
+
+                // Load session
+                item.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-delete-history')) return;
+                    loadSession(session.id);
+                });
+
+                // Delete session
+                const delBtn = item.querySelector('.btn-delete-history');
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    chatSessions = chatSessions.filter(s => s.id !== session.id);
+                    localStorage.setItem('cm_chat_sessions', JSON.stringify(chatSessions));
+                    if (currentSessionId === session.id) {
+                        btnNewChat.click();
+                    } else {
+                        renderHistoryList();
+                    }
+                });
+
+                historyList.appendChild(item);
+            });
+        }
+
+        function loadSession(sessionId) {
+            const session = chatSessions.find(s => s.id === sessionId);
+            if (!session) return;
+
+            currentSessionId = sessionId;
+            messagesList.innerHTML = '';
+            heroWelcome.style.display = session.messages.length ? 'none' : 'flex';
+
+            session.messages.forEach(msg => {
+                if (msg.role === 'user') {
+                    appendUserMessage(msg.text);
+                } else {
+                    const { bodyEl } = appendAiMessage();
+                    finalizeAiMessage(bodyEl, msg.text);
+                }
+            });
+
+            renderHistoryList();
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('active');
             }
         }
 
         function escapeHtml(str) {
             return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
     </script>
 </body>

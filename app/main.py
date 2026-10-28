@@ -104,10 +104,17 @@ async def serve_ui():
 
 @app.get("/health")
 @app.get("/test")
-def health_check():
+async def health_check():
+    active_model = DEFAULT_MODEL
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            active_model = await get_available_model(client)
+    except Exception:
+        pass
     return {
         "status": "ok",
         "service": "CintaMamaAI",
+        "model": active_model,
         "message": "Service is healthy and ready",
     }
 
