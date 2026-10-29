@@ -1,14 +1,14 @@
 {
   "status": "success",
   "model": "nomic-embed-text",
-  "base_url": "http://localhost:11434",
+  "base_url": "http://127.0.0.1:11434",
   "embedding_dimension": 768,
-  "total_chunks_embedded": 2167,
-  "total_duration_seconds": 2283.43,
-  "average_speed_chunks_per_sec": 0.95,
+  "total_chunks_embedded": 3509,
+  "total_duration_seconds": 6506.16,
+  "average_speed_chunks_per_sec": 0.21,
   "output_file": "/Users/hary/Documents/Semester 7/Proyek Data Science - Pak Ilham Anugerah/Materi 3/ollama-docker/knowledge-base/embedded_chunks.json",
-  "total_tokens": 1162346,
-  "average_tokens_per_chunk": 536.4,
+  "total_tokens": 2894574,
+  "average_tokens_per_chunk": 824.9,
   "min_tokens_per_chunk": 73,
   "max_tokens_per_chunk": 4997,
   "token_budget_config": {
@@ -50,9 +50,9 @@
       "avg_tokens": 666.5
     },
     "JavaScript": {
-      "chunks": 92,
-      "total_tokens": 58614,
-      "avg_tokens": 637.1
+      "chunks": 1434,
+      "total_tokens": 1790842,
+      "avg_tokens": 1248.8
     },
     "Kotlin": {
       "chunks": 158,
