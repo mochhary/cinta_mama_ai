@@ -2,7 +2,7 @@
 <html lang="id" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
     <title>CintaMama AI</title>
     <!-- Google Sans Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,12 +105,21 @@
             font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
 
+        html {
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             background-color: var(--bg-app);
             color: var(--text-primary);
+            height: 100%;
             height: 100vh;
+            height: 100dvh;
+            min-height: -webkit-fill-available;
             display: flex;
             overflow: hidden;
+            width: 100%;
             transition: background-color 0.2s ease, color 0.2s ease;
         }
 
@@ -259,6 +268,8 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            height: 100%;
+            min-height: 0;
             background-color: var(--bg-chat-canvas);
         }
 
@@ -339,7 +350,8 @@
             position: relative;
             overflow: hidden;
             width: 100%;
-            height: calc(100vh - 60px);
+            height: 100%;
+            min-height: 0;
         }
 
         .chat-pane {
@@ -1139,26 +1151,159 @@
                 top: 0;
                 bottom: 0;
                 left: 0;
+                width: 280px;
+                max-width: 85vw;
                 transform: translateX(-100%);
+                z-index: 120;
             }
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
             .sidebar-overlay.active {
                 display: block;
+                z-index: 110;
+            }
+
+            .top-header {
+                height: 52px;
+                padding: 0 12px;
+            }
+            .brand-title {
+                font-size: 0.95rem;
+            }
+            .header-left {
+                gap: 8px;
+            }
+            .cm-logo-svg {
+                width: 30px;
+                height: 30px;
+            }
+            .header-action-btn {
+                width: 34px;
+                height: 34px;
+            }
+
+            .chat-pane {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                min-height: 0;
+                position: relative;
+            }
+
+            /* In-flow scroll container: chat content physically ends above the input bar */
+            .chat-scroll-area {
+                flex: 1 1 auto;
+                min-height: 0;
+                height: auto;
+                padding: 12px 12px 14px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Pinned bottom input container on mobile: never covered by screen elements */
+            .input-bar-container {
+                position: relative;
+                flex-shrink: 0;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                width: 100%;
+                padding: 8px 10px;
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+                background-color: var(--bg-chat-canvas);
+                border-top: 1px solid var(--border-subtle);
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.12);
+                z-index: 40;
+            }
+
+            .input-box-wrapper {
+                padding: 8px 12px 6px 14px;
+                border-radius: 18px;
+                gap: 4px;
+            }
+
+            /* Minimum 16px font-size to prevent iOS Safari auto-zooming */
+            .input-textarea {
+                font-size: 16px !important;
+                max-height: 100px;
+                padding: 3px 0;
+                line-height: 1.4;
+            }
+
+            .input-disclaimer {
+                display: none;
+            }
+
+            /* Compact hero welcome on mobile screens */
+            .hero-welcome {
+                padding: 10px 0 8px;
+                margin: 0 auto;
+            }
+            .hero-logo-large {
+                margin-bottom: 10px;
+            }
+            .hero-logo-large svg {
+                width: 48px;
+                height: 48px;
             }
             .hero-title {
-                font-size: 1.6rem;
+                font-size: 1.35rem;
+                margin-bottom: 4px;
             }
+            .hero-subtitle {
+                font-size: 0.82rem;
+                margin-bottom: 14px;
+                padding: 0 8px;
+            }
+
+            /* 2x2 compact suggestion cards on mobile */
+            .suggestion-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                padding: 0 2px;
+            }
+            .suggestion-card {
+                padding: 10px 10px;
+                border-radius: 12px;
+                gap: 3px;
+            }
+            .suggestion-card-header {
+                font-size: 0.78rem;
+                gap: 6px;
+            }
+            .suggestion-card-header svg {
+                width: 14px;
+                height: 14px;
+            }
+            .suggestion-card-text {
+                font-size: 0.7rem;
+                line-height: 1.3;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
             .bubble {
-                max-width: 88%;
+                max-width: 90%;
+                font-size: 0.9rem;
+                padding: 10px 13px;
             }
+            .avatar-wrap {
+                width: 28px;
+                height: 28px;
+            }
+            .avatar-wrap svg {
+                width: 16px;
+                height: 16px;
+            }
+
             .inspector-pane {
                 position: absolute;
                 top: 0;
                 right: 0;
                 bottom: 0;
-                z-index: 95;
+                z-index: 130;
                 box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
             }
             .workspace-body.inspector-open .inspector-pane {
@@ -1167,9 +1312,13 @@
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 420px) {
             .suggestion-grid {
                 grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            .brand-title {
+                font-size: 0.88rem;
             }
         }
     </style>
@@ -1744,11 +1893,30 @@
         // Input textarea auto-resize & submit on enter
         promptInput.addEventListener('input', () => {
             promptInput.style.height = 'auto';
-            promptInput.style.height = Math.min(promptInput.scrollHeight, 160) + 'px';
+            const maxHeight = window.innerWidth <= 768 ? 100 : 160;
+            promptInput.style.height = Math.min(promptInput.scrollHeight, maxHeight) + 'px';
             if (!isGenerating) {
                 btnSend.disabled = !promptInput.value.trim();
             }
         });
+
+        // Ensure input and newest messages are visible when virtual keyboard opens on mobile
+        promptInput.addEventListener('focus', () => {
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+                    promptInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 300);
+            }
+        });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                if (window.innerWidth <= 768) {
+                    chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+                }
+            });
+        }
 
         promptInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
