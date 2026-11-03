@@ -20,10 +20,10 @@ make setup
 
 Script `setup.sh` secara semi-otomatis akan melakukan:
 1. Memeriksa ketersediaan dan status Docker daemon.
-2. Membangun (*build*) dan menyalakan seluruh service container (`api`, `ollama`, `opensearch`).
+2. Membangun (*build*) dan menyalakan seluruh service container (`api`, `ollama`, `opensearch`, `opensearch-dashboards`).
 3. Menunggu service siap (*healthcheck polling*).
 4. Mengunduh model Ollama yang dibutuhkan (`nomic-embed-text` dan `llama3.2:3b`) jika belum tersedia.
-5. Memeriksa status Vector DB dan melakukan indexing otomatis 2.167 chunk pengetahuan ke OpenSearch jika index masih kosong.
+5. Memeriksa status Vector DB dan melakukan indexing otomatis 3.509 chunk pengetahuan ke OpenSearch jika index masih kosong.
 
 Setelah script selesai, seluruh sistem langsung siap digunakan tanpa konfigurasi manual tambahan.
 
