@@ -6,6 +6,8 @@ import re
 import time
 from typing import Any, Dict, List
 from pypdf import PdfReader
+from app.embeddings import embed_text
+from app.vector_store import VectorStore
 
 # Resolusi path knowledge-base (mendukung eksekusi lokal dan dalam container Docker)
 DEFAULT_KB_PATH = os.environ.get("KNOWLEDGE_BASE_PATH", "knowledge-base")
@@ -37,6 +39,41 @@ def extract_text(file_path: str) -> str:
         return "\n".join(page.extract_text() or "" for page in reader.pages)
     with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
         return f.read()
+
+
+def ingest_documents(
+    knowledge_base_path: str,
+    vector_store: VectorStore,
+    index_name: str,
+    ollama_base_url: str,
+) -> int:
+    """Menyimpan seluruh berkas SOP pemrograman dari knowledge-base ke OpenSearch."""
+    vector_store.ensure_index(index_name)
+    count = 0
+
+    # Cari berkas SOP (sop-*.md) di root knowledge-base atau di subfolder programming/
+    sop_files = sorted(glob.glob(os.path.join(knowledge_base_path, "sop-*.md")))
+    if not sop_files:
+        sop_files = sorted(glob.glob(os.path.join(knowledge_base_path, "programming", "sop-*.md")))
+    if not sop_files and os.path.exists(knowledge_base_path):
+        sop_files = sorted(glob.glob(os.path.join(knowledge_base_path, "*.md")))
+
+    for file_path in sop_files:
+        filename = os.path.basename(file_path)
+        text = extract_text(file_path)
+        if not text or len(text.strip()) < 10:
+            continue
+        # Buat vektor embedding dokumen
+        embedding = embed_text(text[:3000], base_url=ollama_base_url)
+        vector_store.index_document(
+            index_name,
+            doc_id=filename,
+            text=text,
+            embedding=embedding,
+            metadata={"source": filename, "category": "programming-sop"},
+        )
+        count += 1
+    return count
 
 
 def parse_sop(file_path: str) -> List[Dict[str, Any]]:
@@ -156,8 +193,10 @@ def ingest_all(
     start_time = time.time()
     chunks: List[Dict[str, Any]] = []
 
-    # Ingest SOP (dari knowledge-base)
+    # Ingest SOP (dari knowledge-base atau knowledge-base/programming)
     sop_files = sorted(glob.glob(os.path.join(kb_dir, "sop-*.md")))
+    if not sop_files:
+        sop_files = sorted(glob.glob(os.path.join(kb_dir, "programming", "sop-*.md")))
     for path in sop_files:
         chunks.extend(parse_sop(path))
 

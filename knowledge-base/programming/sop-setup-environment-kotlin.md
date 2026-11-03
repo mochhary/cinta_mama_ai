@@ -62,8 +62,8 @@ Pastikan `kotlinc` menampilkan versi `2.0.x` atau yang lebih mutakhir.
    fun evaluateState(state: AppState): String {
        // Uji exhaustive when dan Smart Cast 2.0
        return when (state) {
-           is AppState.Initializing => "Memulai inisialisasi lingkungan..."
-           is AppState.Running => "Status: Kotlin ${state.version} K2 Compiler aktif dan terverifikasi."
+           is AppState.Initializing -> "Memulai inisialisasi lingkungan..."
+           is AppState.Running -> "Status: Kotlin ${state.version} K2 Compiler aktif dan terverifikasi."
        }
    }
 
