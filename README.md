@@ -36,6 +36,7 @@ Setelah script selesai, seluruh sistem langsung siap digunakan tanpa konfigurasi
 | **Web UI & Chatbot** | [http://localhost:8000](http://localhost:8000) | Antarmuka chat interaktif modern |
 | **API Healthcheck** | [http://localhost:8000/health](http://localhost:8000/health) | Endpoint status layanan API |
 | **OpenSearch Vector DB** | [http://localhost:9200](http://localhost:9200) | REST API Vector Database (port 9200) |
+| **OpenSearch Dashboards** | [http://localhost:5601](http://localhost:5601) | Visual UI & Dev Tools (port 5601) |
 | **Ollama API** | [http://localhost:11434](http://localhost:11434) | Endpoint LLM & Embedding Engine |
 
 ---
