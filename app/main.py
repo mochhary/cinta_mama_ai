@@ -32,6 +32,15 @@ class GenerateRequest(BaseModel):
     prompt: str
 
 
+class Message(BaseModel):
+    role: str
+    content: str
+
+
+class ChatStreamRequest(BaseModel):
+    messages: list[Message]
+
+
 async def get_available_model(client: httpx.AsyncClient) -> str:
     """Otomatis mendeteksi model yang terinstal di Ollama."""
     try:
@@ -140,6 +149,47 @@ async def generate_stream_endpoint(request: GenerateRequest):
         "model": selected_model,
         "prompt": request.prompt,
         "system": SYSTEM_PROMPT,
+        "stream": True,
+    }
+
+    async def stream_generator():
+        client = httpx.AsyncClient(timeout=180.0)
+        try:
+            async with client.stream("POST", url, json=payload) as response:
+                if response.status_code != 200:
+                    err_body = await response.aread()
+                    yield f'{{"error": "Ollama error: {err_body.decode()}"}}\n'
+                    return
+                async for line in response.aiter_lines():
+                    if line:
+                        yield f"{line}\n"
+        except httpx.ConnectError:
+            yield '{"error": "Tidak dapat terhubung ke Ollama container."}\n'
+        except Exception as e:
+            yield f'{{"error": "{str(e)}"}}\n'
+        finally:
+            await client.aclose()
+
+    return StreamingResponse(stream_generator(), media_type="application/x-ndjson")
+
+
+@app.post("/chat/stream")
+async def chat_stream_endpoint(request: ChatStreamRequest):
+    """Stream percakapan multi-turn baris demi baris dari Ollama."""
+    if not request.messages or request.messages[-1].role != "user":
+        raise HTTPException(
+            status_code=400,
+            detail="messages harus non-kosong dan elemen terakhir harus role 'user'",
+        )
+
+    async with httpx.AsyncClient(timeout=120.0) as check_client:
+        selected_model = await get_available_model(check_client)
+
+    url = f"{OLLAMA_BASE_URL}/api/chat"
+    payload = {
+        "model": selected_model,
+        "messages": [{"role": "system", "content": SYSTEM_PROMPT}]
+        + [{"role": m.role, "content": m.content} for m in request.messages],
         "stream": True,
     }
 
