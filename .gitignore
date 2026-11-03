@@ -19,3 +19,7 @@ run-tunnel.sh
 cloudflared*
 .cloudflared/
 tunnel.log
+
+# Private Local Documentation / Handouts (Not for Git)
+docs/
+
