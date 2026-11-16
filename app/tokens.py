@@ -36,7 +36,6 @@ def count_tokens(text: str) -> int:
         elif len(w) <= 4:
             tokens += 1
         else:
-            # Kata yang lebih panjang dipecah oleh tokenizer subword BPE
             tokens += math.ceil(len(w) / 3.8)
 
     return max(1, int(tokens))
@@ -54,11 +53,9 @@ def truncate_by_tokens(text: str, max_tokens: int) -> str:
     if current_tokens <= max_tokens:
         return text
 
-    # Estimasi kasar posisi karakter berdasarkan rasio token
     ratio = max_tokens / current_tokens
     estimated_char_limit = int(len(text) * ratio)
 
-    # Cari batas akhir kalimat (. ! ?) atau baris baru sebelum batas estimasi
     candidate = text[:estimated_char_limit]
     break_points = [
         candidate.rfind(".\n"),
@@ -76,14 +73,12 @@ def truncate_by_tokens(text: str, max_tokens: int) -> str:
         best_break = max(valid_breaks) + 1
         truncated = text[:best_break].strip()
     else:
-        # Fallback potong di spasi terdekat
         last_space = candidate.rfind(" ")
         if last_space > 0:
             truncated = text[:last_space].strip() + "..."
         else:
             truncated = candidate.strip() + "..."
 
-    # Validasi ulang agar pasti tidak melebihi max_tokens
     while count_tokens(truncated) > max_tokens and len(truncated) > 10:
         truncated = truncated[:-10].rstrip() + "..."
 
@@ -91,55 +86,53 @@ def truncate_by_tokens(text: str, max_tokens: int) -> str:
 
 
 def fit_context_to_budget(
-    chunks: List[Dict[str, Any]],
+    documents: List[Dict[str, Any]],
     max_token_budget: int = DEFAULT_BUDGET["knowledge_context"],
     separator: str = "\n\n---\n\n",
 ) -> Dict[str, Any]:
     """
-    Memilih dan menyusun chunk-chunk hasil pencarian ke dalam konteks prompt,
+    Memilih dan menyusun dokumen-dokumen hasil pencarian ke dalam konteks prompt,
     memastikan total token akumulatif tidak melebihi batas budget pengetahuan.
     """
-    selected_chunks = []
+    selected_documents = []
     accumulated_tokens = 0
     separator_tokens = count_tokens(separator)
     formatted_texts = []
 
-    for chunk in chunks:
-        content = chunk.get("content", "")
-        # Gunakan token_count yang sudah di-cache jika tersedia
-        chunk_tok = chunk.get("token_count")
-        if chunk_tok is None:
-            chunk_tok = count_tokens(content)
+    for doc in documents:
+        content = doc.get("content", "")
+        doc_tok = doc.get("token_count")
+        if doc_tok is None:
+            doc_tok = count_tokens(content)
 
-        additional_tokens = chunk_tok + (separator_tokens if selected_chunks else 0)
+        additional_tokens = doc_tok + (separator_tokens if selected_documents else 0)
 
         # Jika masih muat secara utuh
         if accumulated_tokens + additional_tokens <= max_token_budget:
-            selected_item = dict(chunk)
-            selected_item["used_tokens"] = chunk_tok
+            selected_item = dict(doc)
+            selected_item["used_tokens"] = doc_tok
             selected_item["is_truncated"] = False
-            selected_chunks.append(selected_item)
+            selected_documents.append(selected_item)
             formatted_texts.append(content)
             accumulated_tokens += additional_tokens
         else:
             # Jika tidak muat utuh, cek sisa budget
-            remaining_budget = max_token_budget - accumulated_tokens - (separator_tokens if selected_chunks else 0)
+            remaining_budget = max_token_budget - accumulated_tokens - (separator_tokens if selected_documents else 0)
             if remaining_budget >= 80:
-                # Potong bagian akhir chunk ini agar pas dengan sisa budget
                 truncated_content = truncate_by_tokens(content, remaining_budget)
                 used_tok = count_tokens(truncated_content)
-                selected_item = dict(chunk)
+                selected_item = dict(doc)
                 selected_item["content"] = truncated_content
                 selected_item["used_tokens"] = used_tok
                 selected_item["is_truncated"] = True
-                selected_chunks.append(selected_item)
+                selected_documents.append(selected_item)
                 formatted_texts.append(truncated_content)
-                accumulated_tokens += used_tok + (separator_tokens if selected_chunks else 0)
+                accumulated_tokens += used_tok + (separator_tokens if selected_documents else 0)
             break
 
     return {
-        "selected_chunks": selected_chunks,
-        "total_chunks_selected": len(selected_chunks),
+        "selected_documents": selected_documents,
+        "total_documents_selected": len(selected_documents),
         "total_context_tokens": accumulated_tokens,
         "max_token_budget": max_token_budget,
         "formatted_context": separator.join(formatted_texts),
@@ -175,57 +168,57 @@ def estimate_prompt_tokens(
     }
 
 
-def annotate_all_chunks(kb_path: str = DEFAULT_KB_PATH) -> Dict[str, Any]:
+def annotate_all_documents(kb_path: str = DEFAULT_KB_PATH) -> Dict[str, Any]:
     """
-    Menyisipkan field token_count ke seluruh chunk di knowledge-base/embedded_chunks.json
-    dan knowledge-base/ingested_chunks.json, serta memperbarui berkas summary.
+    Menyisipkan field token_count ke seluruh dokumen di knowledge-base/embedded_documents.json
+    dan knowledge-base/ingested_documents.json, serta memperbarui berkas summary.
     """
-    embedded_file = os.path.join(kb_path, "embedded_chunks.json")
-    ingested_file = os.path.join(kb_path, "ingested_chunks.json")
+    embedded_file = os.path.join(kb_path, "embedded_documents.json")
+    ingested_file = os.path.join(kb_path, "ingested_documents.json")
     summary_file = os.path.join(kb_path, "embedded_summary.json")
 
     if not os.path.exists(embedded_file):
         raise FileNotFoundError(f"Berkas {embedded_file} tidak ditemukan.")
 
     t0 = time.time()
-    print(f"[INFO] Membaca data chunk dari {embedded_file}...")
+    print(f"[INFO] Membaca data dokumen dari {embedded_file}...")
     with open(embedded_file, "r", encoding="utf-8") as f:
-        embedded_chunks = json.load(f)
+        embedded_docs = json.load(f)
 
-    total_chunks = len(embedded_chunks)
+    total_docs = len(embedded_docs)
     total_tokens = 0
     token_counts = []
     lang_tokens: Dict[str, Dict[str, Any]] = {}
 
-    for chunk in embedded_chunks:
-        tok = count_tokens(chunk["content"])
-        chunk["token_count"] = tok
+    for doc in embedded_docs:
+        tok = count_tokens(doc["content"])
+        doc["token_count"] = tok
         total_tokens += tok
         token_counts.append(tok)
 
-        lang = chunk.get("language", "Unknown")
+        lang = doc.get("language", "Unknown")
         if lang not in lang_tokens:
-            lang_tokens[lang] = {"chunks": 0, "tokens": 0, "characters": 0}
-        lang_tokens[lang]["chunks"] += 1
+            lang_tokens[lang] = {"documents": 0, "tokens": 0, "characters": 0}
+        lang_tokens[lang]["documents"] += 1
         lang_tokens[lang]["tokens"] += tok
-        lang_tokens[lang]["characters"] += chunk.get("char_count", len(chunk["content"]))
+        lang_tokens[lang]["characters"] += doc.get("char_count", len(doc["content"]))
 
-    # Simpan kembali embedded_chunks.json dengan token_count
-    print(f"[INFO] Menyimpan {total_chunks} chunk beranotasi token ke {embedded_file}...")
+    # Simpan kembali embedded_documents.json
+    print(f"[INFO] Menyimpan {total_docs} dokumen beranotasi token ke {embedded_file}...")
     with open(embedded_file, "w", encoding="utf-8") as f:
-        json.dump(embedded_chunks, f, ensure_ascii=False)
+        json.dump(embedded_docs, f, ensure_ascii=False, indent=2)
 
-    # Sinkronisasi token_count juga ke ingested_chunks.json
+    # Sinkronisasi token_count juga ke ingested_documents.json
     if os.path.exists(ingested_file):
         print(f"[INFO] Menyinkronkan token_count ke {ingested_file}...")
         with open(ingested_file, "r", encoding="utf-8") as f:
-            ingested_chunks = json.load(f)
-        for chunk in ingested_chunks:
-            chunk["token_count"] = count_tokens(chunk["content"])
+            ingested_docs = json.load(f)
+        for doc in ingested_docs:
+            doc["token_count"] = count_tokens(doc["content"])
         with open(ingested_file, "w", encoding="utf-8") as f:
-            json.dump(ingested_chunks, f, ensure_ascii=False, indent=2)
+            json.dump(ingested_docs, f, ensure_ascii=False, indent=2)
 
-    # Muat summary yang ada atau buat baru
+    # Update summary
     summary_data = {}
     if os.path.exists(summary_file):
         try:
@@ -236,15 +229,15 @@ def annotate_all_chunks(kb_path: str = DEFAULT_KB_PATH) -> Dict[str, Any]:
 
     summary_data.update({
         "total_tokens": total_tokens,
-        "average_tokens_per_chunk": round(total_tokens / total_chunks, 1) if total_chunks else 0,
-        "min_tokens_per_chunk": min(token_counts) if token_counts else 0,
-        "max_tokens_per_chunk": max(token_counts) if token_counts else 0,
+        "average_tokens_per_document": round(total_tokens / total_docs, 1) if total_docs else 0,
+        "min_tokens_per_document": min(token_counts) if token_counts else 0,
+        "max_tokens_per_document": max(token_counts) if token_counts else 0,
         "token_budget_config": DEFAULT_BUDGET,
         "language_token_distribution": {
             lang: {
-                "chunks": data["chunks"],
+                "documents": data["documents"],
                 "total_tokens": data["tokens"],
-                "avg_tokens": round(data["tokens"] / data["chunks"], 1) if data["chunks"] else 0,
+                "avg_tokens": round(data["tokens"] / data["documents"], 1) if data["documents"] else 0,
             }
             for lang, data in sorted(lang_tokens.items())
         },
@@ -254,46 +247,19 @@ def annotate_all_chunks(kb_path: str = DEFAULT_KB_PATH) -> Dict[str, Any]:
         json.dump(summary_data, f, ensure_ascii=False, indent=2)
 
     duration = round(time.time() - t0, 2)
-    print(f"[OK] Selesai menambahkan anotasi token dalam {duration} detik.")
+    print(f"[OK] Selesai menghitung token {total_docs} dokumen dalam {duration}s.")
+    print(f"[OK] Total token di seluruh basis pengetahuan: {total_tokens:,} token.")
+    print(f"[OK] Rata-rata token per dokumen: {summary_data['average_tokens_per_document']} token.")
 
-    return {
-        "status": "success",
-        "total_chunks": total_chunks,
-        "total_tokens": total_tokens,
-        "avg_tokens": round(total_tokens / total_chunks, 1) if total_chunks else 0,
-        "min_tokens": min(token_counts) if token_counts else 0,
-        "max_tokens": max(token_counts) if token_counts else 0,
-        "duration_seconds": duration,
-        "language_distribution": lang_tokens,
-    }
+    return summary_data
 
 
 def main():
     print("=" * 65)
-    print("MEMULAI PROSES PENANGANAN DAN ANOTASI TOKEN")
+    print("ANALISIS DAN ANOTASI TOKEN BASIS PENGETAHUAN DOKUMEN")
     print("=" * 65)
-
-    stats = annotate_all_chunks()
-
-    print("\n" + "=" * 65)
-    print("STATISTIK PENANGANAN TOKEN CORPUS")
-    print("=" * 65)
-    print(f"Total Chunk Diproses     : {stats['total_chunks']:,} chunk")
-    print(f"Total Token Terhitung    : {stats['total_tokens']:,} token")
-    print(f"Rata-rata Token per Chunk: {stats['avg_tokens']} token")
-    print(f"Token Terpendek          : {stats['min_tokens']} token")
-    print(f"Token Terpanjang         : {stats['max_tokens']} token")
-    print(f"Waktu Eksekusi           : {stats['duration_seconds']} detik")
-    print("-" * 65)
-    print(f"{'Bahasa':<12} | {'Chunks':<7} | {'Total Token':<13} | {'Rata-rata':<10}")
-    print("-" * 65)
-    for lang, data in sorted(stats["language_distribution"].items()):
-        avg = round(data["tokens"] / data["chunks"], 1) if data["chunks"] else 0
-        print(f"{lang:<12} | {data['chunks']:<7} | {data['tokens']:<13,} | {avg:<10}")
-    print("=" * 65)
-    print("[OK] Seluruh data chunk telah diperkaya dengan atribut token_count.")
+    annotate_all_documents()
 
 
 if __name__ == "__main__":
     main()
-

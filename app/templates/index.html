@@ -1059,16 +1059,16 @@
             font-style: italic;
         }
 
-        .chunk-token {
+        .stream-token-line {
             color: var(--text-primary);
         }
 
-        .chunk-done {
+        .stream-done-line {
             color: var(--wa-green);
             font-weight: 600;
         }
 
-        .chunk-error {
+        .stream-error-line {
             color: #ea4335;
             font-weight: 600;
         }
@@ -1602,7 +1602,7 @@
                             <span>INCOMING HTTP STREAM (RAW NDJSON)</span>
                         </div>
                         <div class="api-box-actions">
-                            <span class="stream-counter" id="streamCounter">0 chunks</span>
+                            <span class="stream-counter" id="streamCounter">0 token</span>
                             <span class="badge-status status-idle" id="resStatusBadge">IDLE</span>
                         </div>
                     </div>
@@ -1630,7 +1630,7 @@
                     <div class="api-stream-block" id="apiStreamBlock">
                         <div class="stream-line">
                             <span class="stream-line-num">0</span>
-                            <span class="stream-line-content line-placeholder">// Siap menerima raw streaming chunks dari Ollama...</span>
+                            <span class="stream-line-content line-placeholder">// Siap menerima raw streaming token dari Ollama...</span>
                         </div>
                     </div>
                 </div>
@@ -1734,7 +1734,7 @@
                     <span class="stream-line-content line-placeholder">// Log streaming dibersihkan.</span>
                 </div>
             `;
-            streamCounter.textContent = '0 chunks';
+            streamCounter.textContent = '0 token';
             resStatusBadge.className = 'badge-status status-idle';
             resStatusBadge.textContent = 'IDLE';
             resProtocolStatus.textContent = 'HTTP/1.1 --- (Waiting)';
@@ -1761,11 +1761,11 @@
 
             let contentHtml = '';
             if (isDone) {
-                contentHtml = `<span class="chunk-done">${escapeHtml(rawJsonString)}</span>`;
+                contentHtml = `<span class="stream-done-line">${escapeHtml(rawJsonString)}</span>`;
             } else if (isError) {
-                contentHtml = `<span class="chunk-error">${escapeHtml(rawJsonString)}</span>`;
+                contentHtml = `<span class="stream-error-line">${escapeHtml(rawJsonString)}</span>`;
             } else {
-                contentHtml = `<span class="chunk-token">${escapeHtml(rawJsonString)}</span>`;
+                contentHtml = `<span class="stream-token-line">${escapeHtml(rawJsonString)}</span>`;
             }
 
             lineEl.innerHTML = `
@@ -1999,16 +1999,16 @@
 
             // Reset Stream Telemetry in Inspector
             apiStreamBlock.innerHTML = '';
-            streamCounter.textContent = '0 chunks';
+            streamCounter.textContent = '0 token';
             resStatusBadge.className = 'badge-status status-pending';
             resStatusBadge.textContent = 'CONNECTING';
-            resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Transfer-Encoding: chunked)';
+            resProtocolStatus.textContent = 'HTTP/1.1 200 OK (Content-Type: application/x-ndjson)';
             resLatency.textContent = '...';
             resSpeed.textContent = '...';
             resTokens.textContent = '...';
 
             const startTime = performance.now();
-            let chunkIndex = 0;
+            let lineIndex = 0;
 
             // Initialize or retrieve session
             if (!currentSessionId) {
@@ -2068,8 +2068,8 @@
 
                     for (const line of lines) {
                         if (!line.trim()) continue;
-                        chunkIndex++;
-                        streamCounter.textContent = `${chunkIndex} chunks`;
+                        lineIndex++;
+                        streamCounter.textContent = `${lineIndex} token`;
 
                         try {
                             const data = JSON.parse(line);
@@ -2083,7 +2083,7 @@
                                 fullResponseText += data.response;
                                 bodyEl.textContent = fullResponseText;
                                 chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
-                                appendStreamLine(chunkIndex, line, false, false);
+                                appendStreamLine(lineIndex, line, false, false);
                             }
                             if (data.done) {
                                 const totalMs = (performance.now() - startTime).toFixed(1);
@@ -2096,7 +2096,7 @@
                                     resSpeed.textContent = `${speed} t/s`;
                                     resTokens.textContent = `${data.eval_count} tok`;
                                 }
-                                appendStreamLine(chunkIndex, line, true, false);
+                                appendStreamLine(lineIndex, line, true, false);
                             }
                         } catch (parseErr) {
                             if (parseErr.message && parseErr.message.includes('Ollama error')) {
@@ -2126,12 +2126,12 @@
                     }
                     resStatusBadge.className = 'badge-status status-idle';
                     resStatusBadge.textContent = 'ABORTED';
-                    appendStreamLine(chunkIndex + 1, '{"status": "Generasi dihentikan oleh pengguna"}', true, false);
+                    appendStreamLine(lineIndex + 1, '{"status": "Generasi dihentikan oleh pengguna"}', true, false);
                 } else {
                     resStatusBadge.className = 'badge-status status-error';
                     resStatusBadge.textContent = 'ERROR';
                     resProtocolStatus.textContent = 'HTTP/1.1 Connection Failed';
-                    appendStreamLine(chunkIndex + 1, JSON.stringify({ error: err.message }), false, true);
+                    appendStreamLine(lineIndex + 1, JSON.stringify({ error: err.message }), false, true);
                     bodyEl.innerHTML = `<span style="color:#ea4335;">[ERROR] Gagal memproses: ${escapeHtml(err.message)}</span>`;
                 }
             } finally {

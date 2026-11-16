@@ -18,7 +18,7 @@ DEFAULT_KB_PATH = os.environ.get("KNOWLEDGE_BASE_PATH", "knowledge-base")
 class VectorStore:
     """
     Pengelola Vector Database berbasis OpenSearch dengan dukungan k-NN plugin.
-    Menyediakan operasi pembuatan indeks vektor, bulk indexing dokumen,
+    Menyediakan operasi pembuatan indeks vektor, bulk indexing dokumen utuh,
     dan pencarian kemiripan semantik (k-NN search).
     """
 
@@ -82,21 +82,21 @@ class VectorStore:
             create_res.raise_for_status()
             return True
 
-    def bulk_index_chunks(self, chunks: List[Dict[str, Any]], batch_size: int = 100) -> Dict[str, Any]:
+    def bulk_index_documents(self, documents: List[Dict[str, Any]], batch_size: int = 100) -> Dict[str, Any]:
         """
-        Mengunggah kumpulan chunk embedding ke OpenSearch menggunakan bulk API.
+        Mengunggah kumpulan dokumen embedding ke OpenSearch menggunakan bulk API.
         """
         self.ensure_index()
-        total_chunks = len(chunks)
+        total_documents = len(documents)
         start_time = time.time()
         success_count = 0
         error_count = 0
 
-        print(f"[INFO] Memulai bulk index {total_chunks} dokumen ke OpenSearch ({self.index_name})...")
+        print(f"[INFO] Memulai bulk index {total_documents} dokumen ke OpenSearch ({self.index_name})...")
 
         with httpx.Client(timeout=120.0) as client:
-            for i in range(0, total_chunks, batch_size):
-                batch = chunks[i : i + batch_size]
+            for i in range(0, total_documents, batch_size):
+                batch = documents[i : i + batch_size]
                 lines = []
 
                 for doc in batch:
@@ -116,20 +116,18 @@ class VectorStore:
                 res.raise_for_status()
                 result = res.json()
 
-                batch_errors = 0
                 for item in result.get("items", []):
                     action_data = item.get("index", {})
                     if action_data.get("status") in (200, 201):
                         success_count += 1
                     else:
                         error_count += 1
-                        batch_errors += 1
 
-                progress = min(i + batch_size, total_chunks)
-                rate = progress / (time.time() - start_time)
+                progress = min(i + batch_size, total_documents)
+                rate = progress / (time.time() - start_time) if (time.time() - start_time) > 0 else 0
                 print(
-                    f"[INFO] Progress: {progress}/{total_chunks} "
-                    f"({(progress / total_chunks * 100):.1f}%) | "
+                    f"[INFO] Progress: {progress}/{total_documents} "
+                    f"({(progress / total_documents * 100):.1f}%) | "
                     f"Kecepatan: {rate:.1f} doc/s"
                 )
 
@@ -142,7 +140,7 @@ class VectorStore:
 
         return {
             "status": "success",
-            "total_chunks": total_chunks,
+            "total_documents": total_documents,
             "indexed_count": success_count,
             "error_count": error_count,
             "duration_seconds": duration,
@@ -171,7 +169,6 @@ class VectorStore:
             }
         }
 
-        # Filter tambahan jika ada spesifikasi bahasa atau jenis dokumen
         filters = []
         if language:
             filters.append({"term": {"language": language}})
@@ -203,7 +200,6 @@ class VectorStore:
         results = []
         for hit in hits:
             source = hit.get("_source", {})
-            # Simpan hasil pencarian tanpa menyertakan raw embedding vector agar output ringan
             item = {
                 "id": source.get("id"),
                 "doc_id": source.get("doc_id"),
@@ -227,31 +223,29 @@ def index_knowledge_base(
     opensearch_url: str = DEFAULT_OPENSEARCH_URL,
     index_name: str = DEFAULT_INDEX_NAME,
 ) -> Dict[str, Any]:
-    """Membaca embedded_chunks.json dan memasukkan seluruhnya ke OpenSearch."""
+    """Membaca embedded_documents.json dan memasukkan seluruhnya ke OpenSearch."""
     if embedded_file is None:
-        embedded_file = os.path.join(DEFAULT_KB_PATH, "embedded_chunks.json")
+        embedded_file = os.path.join(DEFAULT_KB_PATH, "embedded_documents.json")
 
     if not os.path.exists(embedded_file):
         raise FileNotFoundError(f"Berkas {embedded_file} tidak ditemukan.")
 
-    print(f"[INFO] Memuat berkas chunk embedding dari: {embedded_file}")
+    print(f"[INFO] Memuat berkas dokumen embedding dari: {embedded_file}")
     with open(embedded_file, "r", encoding="utf-8") as f:
-        chunks = json.load(f)
+        documents = json.load(f)
 
     store = VectorStore(base_url=opensearch_url, index_name=index_name)
-    return store.bulk_index_chunks(chunks)
+    return store.bulk_index_documents(documents)
 
 
 def main():
     print("=" * 65)
-    print("MEMULAI PROSES INDEXING DAN PENGUJIAN VECTOR SEARCH")
+    print("MEMULAI PROSES INDEXING DAN PENGUJIAN VECTOR SEARCH DOKUMEN")
     print("=" * 65)
 
-    # 1. Jalankan bulk indexing seluruh 2.167 chunk
     result = index_knowledge_base()
     print(f"[OK] Selesai indexing: {result['indexed_count']} dokumen tersimpan.")
 
-    # 2. Uji coba pencarian semantik (Vector Search)
     print("\n" + "=" * 65)
     print("PENGUJIAN SEMANTIC VECTOR SEARCH")
     print("=" * 65)

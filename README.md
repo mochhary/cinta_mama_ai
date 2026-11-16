@@ -23,7 +23,7 @@ Script `setup.sh` secara semi-otomatis akan melakukan:
 2. Membangun (*build*) dan menyalakan seluruh service container (`api`, `ollama`, `opensearch`, `opensearch-dashboards`).
 3. Menunggu service siap (*healthcheck polling*).
 4. Mengunduh model Ollama yang dibutuhkan (`nomic-embed-text` dan `llama3.2:3b`) jika belum tersedia.
-5. Memeriksa status Vector DB dan melakukan indexing otomatis 3.509 chunk pengetahuan ke OpenSearch jika index masih kosong.
+5. Memeriksa status Vector DB dan melakukan indexing otomatis dokumen basis pengetahuan SOP dan dokumentasi resmi ke OpenSearch jika index masih kosong.
 
 Setelah script selesai, seluruh sistem langsung siap digunakan tanpa konfigurasi manual tambahan.
 
@@ -87,7 +87,7 @@ Berikut adalah perintah-perintah praktis yang dapat digunakan:
 
 * `app/`: Kode sumber backend FastAPI (`main.py`, `embeddings.py`, `vectordb.py`, `tokens.py`, `ingest.py`).
 * `app/templates/`: File antarmuka Web UI modern (`index.html`).
-* `knowledge-base/`: Sumber dokumen SOP 15 bahasa pemrograman, PDF resmi, dan data chunk embedding (`embedded_chunks.json`).
+* `knowledge-base/`: Sumber berkas SOP 15 bahasa pemrograman, PDF dokumentasi resmi, serta data dokumen embedding (`embedded_documents.json` dan `ingested_documents.json`).
 * `data/`: Berkas dokumentasi CSV dan PDF hasil scraping.
 * `scripts/`: Skrip otomasi scraping dan konversi dokumen.
 * `setup.sh`: Skrip instalasi dan inisialisasi lingkungan otomatis.
