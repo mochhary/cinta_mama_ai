@@ -32,6 +32,8 @@ DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
 OPENSEARCH_BASE_URL = os.getenv("OPENSEARCH_BASE_URL", "http://opensearch:9200")
 OPENSEARCH_INDEX = os.getenv("OPENSEARCH_INDEX", "cinta-mama-docs")
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", "3"))
+# Saklar RAG: set RAG_ENABLED=false untuk simulasi AI tanpa knowledge base
+RAG_ENABLED = os.getenv("RAG_ENABLED", "true").strip().lower() not in ("false", "0", "no", "off")
 
 vector_store = VectorStore(base_url=OPENSEARCH_BASE_URL)
 
@@ -40,6 +42,9 @@ KNOWLEDGE_BASE_PATH = os.environ.get("KNOWLEDGE_BASE_PATH", "/app/knowledge-base
 
 def retrieve_rag_context(query: str, top_k: int = RAG_TOP_K) -> tuple[str, list[dict]]:
     """Melakukan pencarian semantik ke OpenSearch dan menyusun konteks dokumen RAG."""
+    if not RAG_ENABLED:
+        print(f"[RAG] NONAKTIF - menjawab tanpa knowledge base: {query[:80]!r}", flush=True)
+        return "", []
     try:
         query_embedding = embed_text(query, base_url=OLLAMA_BASE_URL)
         hits = vector_store.search(OPENSEARCH_INDEX, query_embedding, k=top_k)
@@ -53,6 +58,10 @@ def retrieve_rag_context(query: str, top_k: int = RAG_TOP_K) -> tuple[str, list[
             source_text = hit.get("_source", {}).get("text", "")
             snippet = source_text[:1200]
             context_parts.append(f"- [Dokumen: {doc_id} | Skor: {score:.4f}]\n{snippet}")
+
+        print(f"[RAG] AKTIF - {len(hits)} dokumen: " + ", ".join(
+            f"{h.get('_id')} ({h.get('_score', 0.0):.4f})" for h in hits
+        ), flush=True)
 
         return "\n\n".join(context_parts), hits
     except Exception:
@@ -159,6 +168,7 @@ async def health_check():
         "status": "ok",
         "service": "CintaMamaAI",
         "model": active_model,
+        "rag_enabled": RAG_ENABLED,
         "message": "Service is healthy and ready",
     }
 

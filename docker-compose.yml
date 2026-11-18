@@ -50,6 +50,7 @@ services:
       - OLLAMA_MODEL=llama3.2:3b
       - KNOWLEDGE_BASE_PATH=/app/knowledge-base
       - OPENSEARCH_BASE_URL=http://opensearch:9200
+      - RAG_ENABLED=${RAG_ENABLED:-true}
     depends_on:
       ollama:
         condition: service_healthy
